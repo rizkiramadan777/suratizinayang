@@ -113,6 +113,64 @@ export default function SignaturePad({
     ctx.stroke();
   };
 
+  // Potong padding transparan kosong di sekeliling TTD
+  const trimCanvas = (canvas: HTMLCanvasElement): string => {
+    try {
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return canvas.toDataURL('image/png');
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const imgData = ctx.getImageData(0, 0, width, height);
+      const data = imgData.data;
+
+      let minX = width;
+      let minY = height;
+      let maxX = -1;
+      let maxY = -1;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const alpha = data[(y * width + x) * 4 + 3];
+          if (alpha > 10) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+
+      if (maxX === -1) {
+        return '';
+      }
+
+      // Beri sedikit margin 10px agar goresan tidak terpotong pas di tepi
+      const padding = 12;
+      const cropX = Math.max(0, minX - padding);
+      const cropY = Math.max(0, minY - padding);
+      const cropW = Math.min(width - cropX, maxX - minX + padding * 2);
+      const cropH = Math.min(height - cropY, maxY - minY + padding * 2);
+
+      const trimmedCanvas = document.createElement('canvas');
+      trimmedCanvas.width = cropW;
+      trimmedCanvas.height = cropH;
+
+      const trimmedCtx = trimmedCanvas.getContext('2d');
+      if (!trimmedCtx) return canvas.toDataURL('image/png');
+
+      trimmedCtx.drawImage(
+        canvas,
+        cropX, cropY, cropW, cropH,
+        0, 0, cropW, cropH
+      );
+
+      return trimmedCanvas.toDataURL('image/png');
+    } catch (e) {
+      return canvas.toDataURL('image/png');
+    }
+  };
+
   const stopDrawing = () => {
     if (!isDrawing) return;
     const canvas = canvasRef.current;
@@ -122,8 +180,8 @@ export default function SignaturePad({
 
     setIsDrawing(false);
 
-    // Export PNG
-    const dataUrl = canvas.toDataURL('image/png');
+    // Export PNG tanpa margin transparan kosong
+    const dataUrl = trimCanvas(canvas);
     onSave(dataUrl);
   };
 
@@ -155,7 +213,7 @@ export default function SignaturePad({
       setHasDrawn(false);
       onSave('');
     } else {
-      const dataUrl = canvas.toDataURL('image/png');
+      const dataUrl = trimCanvas(canvas);
       onSave(dataUrl);
     }
   };

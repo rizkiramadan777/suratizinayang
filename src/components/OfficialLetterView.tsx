@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { PermitLetter } from '@/types/permit';
 import Emblem from './Emblem';
 import Stamp from './Stamp';
@@ -22,6 +22,79 @@ import {
 interface OfficialLetterViewProps {
   permit: PermitLetter;
   id?: string;
+}
+
+// Komponen penampil tanda tangan yang otomatis memotong margin kosong dan memperbesar TTD
+function SignatureImage({ src, alt }: { src: string; alt: string }) {
+  const [trimmedSrc, setTrimmedSrc] = useState<string>(src);
+
+  useEffect(() => {
+    if (!src) return;
+    setTrimmedSrc(src);
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        const w = img.naturalWidth || img.width;
+        const h = img.naturalHeight || img.height;
+        if (!w || !h) return;
+
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0);
+
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+        let minX = w;
+        let minY = h;
+        let maxX = -1;
+        let maxY = -1;
+
+        for (let y = 0; y < h; y++) {
+          for (let x = 0; x < w; x++) {
+            if (data[(y * w + x) * 4 + 3] > 10) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+
+        if (maxX > -1) {
+          const pad = Math.max(8, Math.round(w * 0.01));
+          const cropX = Math.max(0, minX - pad);
+          const cropY = Math.max(0, minY - pad);
+          const cropW = Math.min(w - cropX, maxX - minX + pad * 2);
+          const cropH = Math.min(h - cropY, maxY - minY + pad * 2);
+
+          const trimmedCanvas = document.createElement('canvas');
+          trimmedCanvas.width = cropW;
+          trimmedCanvas.height = cropH;
+          const tCtx = trimmedCanvas.getContext('2d');
+          if (tCtx) {
+            tCtx.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+            setTrimmedSrc(trimmedCanvas.toDataURL('image/png'));
+          }
+        }
+      } catch (e) {
+        setTrimmedSrc(src);
+      }
+    };
+    img.src = src;
+  }, [src]);
+
+  return (
+    <img
+      src={trimmedSrc}
+      alt={alt}
+      className="max-h-full max-w-full h-auto w-auto object-contain filter drop-shadow-sm scale-110 sm:scale-125"
+    />
+  );
 }
 
 const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
@@ -265,12 +338,11 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
             {/* Tanda Tangan Pemohon (Rizki Ramadan) */}
             <div className="flex flex-col items-center">
               <p className="text-xs text-stone-600 mb-2">Pemohon Izin,</p>
-              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
+              <div className="h-32 sm:h-36 w-full max-w-[220px] flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.applicantSignature ? (
-                  <img
+                  <SignatureImage
                     src={permit.applicantSignature}
                     alt="TTD Pemohon"
-                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
                   <span className="text-xs text-stone-400 italic">Belum Bertanda Tangan</span>
@@ -297,12 +369,11 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
               <p className="text-xs text-stone-600 mb-2">
                 Disahkan & Disetujui Oleh,
               </p>
-              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
+              <div className="h-32 sm:h-36 w-full max-w-[220px] flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.approverSignature ? (
-                  <img
+                  <SignatureImage
                     src={permit.approverSignature}
                     alt="TTD Penyetuju"
-                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
                   <span className="text-xs text-pink-500 italic font-medium">

@@ -18,6 +18,7 @@ export interface PermitLetter {
   category: PermitCategory;
   categoryName?: string;
   title: string;
+  letterContent?: string; // Isi surat bebas yang bisa diketik oleh pemohon
   activityDescription: string;
   location: string;
   eventDate: string;

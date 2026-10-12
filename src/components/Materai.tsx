@@ -16,7 +16,7 @@ export default function Materai({ date }: { date?: string }) {
         <div className="flex items-center gap-1">
           <ShieldCheck className="w-3 h-3 text-pink-700" />
           <span className="text-[9px] font-bold tracking-widest text-pink-900 uppercase">
-            E-MATERAI ASMARA
+            E-MATERAI CINTA
           </span>
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-pink-600 animate-pulse" />
         </div>

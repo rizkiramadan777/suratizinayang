@@ -2,89 +2,152 @@ import React from 'react';
 
 export default function Emblem({ className = "w-16 h-16" }: { className?: string }) {
   return (
-    <div className={`relative flex items-center justify-center ${className}`}>
+    <div className={`relative flex items-center justify-center shrink-0 ${className}`}>
       <svg
-        viewBox="0 0 160 160"
+        viewBox="0 0 200 200"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full drop-shadow-sm"
+        className="w-full h-full drop-shadow-md select-none"
       >
         <defs>
-          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#F59E0B" />
-            <stop offset="50%" stopColor="#D97706" />
+          {/* Rose Gold Gradient */}
+          <linearGradient id="roseGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#F472B6" />
+            <stop offset="40%" stopColor="#FB7185" />
+            <stop offset="70%" stopColor="#E11D48" />
+            <stop offset="100%" stopColor="#BE123C" />
+          </linearGradient>
+
+          {/* Luxury Gold Accent Gradient */}
+          <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FDE68A" />
+            <stop offset="50%" stopColor="#F59E0B" />
             <stop offset="100%" stopColor="#B45309" />
           </linearGradient>
-          <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#EF4444" />
-            <stop offset="100%" stopColor="#B91C1C" />
-          </linearGradient>
-          <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FEF3C7" />
-            <stop offset="100%" stopColor="#FDE68A" />
+
+          {/* Soft Pink Inner Glow */}
+          <radialGradient id="innerHeartGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#FFF1F2" />
+            <stop offset="70%" stopColor="#FFE4E6" />
+            <stop offset="100%" stopColor="#FECDD3" />
+          </radialGradient>
+
+          {/* Ribbon Gradient */}
+          <linearGradient id="bannerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#FFE4E6" />
+            <stop offset="50%" stopColor="#FFF1F2" />
+            <stop offset="100%" stopColor="#FFE4E6" />
           </linearGradient>
         </defs>
 
-        {/* Outer Circular Halo */}
-        <circle cx="80" cy="80" r="74" stroke="url(#goldGrad)" strokeWidth="3" strokeDasharray="4 2" opacity="0.8" />
-        <circle cx="80" cy="80" r="69" stroke="#92400E" strokeWidth="1" opacity="0.5" />
+        {/* Outer Circular Laurel / Pearl Ring */}
+        <circle cx="100" cy="100" r="92" stroke="url(#roseGoldGrad)" strokeWidth="2.5" strokeDasharray="3 3" opacity="0.6" />
+        <circle cx="100" cy="100" r="86" stroke="url(#goldAccent)" strokeWidth="1" opacity="0.4" />
 
-        {/* Wings - Left & Right */}
-        <g fill="url(#goldGrad)">
-          {/* Left Wing Feathers */}
-          <path d="M78 50 C50 35, 20 45, 12 75 C18 73, 26 73, 34 76 C20 83, 16 95, 22 105 C30 100, 42 98, 52 102 C42 108, 40 118, 48 122 C58 116, 68 108, 76 96 Z" />
-          {/* Right Wing Feathers */}
-          <path d="M82 50 C110 35, 140 45, 148 75 C142 73, 134 73, 126 76 C140 83, 144 95, 138 105 C130 100, 118 98, 108 102 C118 108, 120 118, 112 122 C102 116, 92 108, 84 96 Z" />
+        {/* Laurel Wreath Leaves (Left & Right) */}
+        <g fill="url(#goldAccent)" opacity="0.85">
+          {/* Left Wreath Leaves */}
+          <path d="M40 70 Q32 60 40 50 Q48 60 40 70 Z" />
+          <path d="M30 92 Q22 82 30 72 Q38 82 30 92 Z" />
+          <path d="M28 116 Q20 106 28 96 Q36 106 28 116 Z" />
+          <path d="M36 138 Q30 128 40 120 Q44 130 36 138 Z" />
+
+          {/* Right Wreath Leaves */}
+          <path d="M160 70 Q168 60 160 50 Q152 60 160 70 Z" />
+          <path d="M170 92 Q178 82 170 72 Q162 82 170 92 Z" />
+          <path d="M172 116 Q180 106 172 96 Q164 106 172 116 Z" />
+          <path d="M164 138 Q170 128 160 120 Q156 130 164 138 Z" />
         </g>
 
-        {/* Central Shield */}
+        {/* Royal Crown / Mahkota Cinta on Top */}
+        <g fill="url(#goldAccent)">
+          <path d="M78 40 L86 28 L100 36 L114 28 L122 40 L118 43 L82 43 Z" />
+          <circle cx="86" cy="26" r="2.5" />
+          <circle cx="100" cy="33" r="3" />
+          <circle cx="114" cy="26" r="2.5" />
+        </g>
+
+        {/* Central Romantic Heart Crest */}
         <path
-          d="M80 32 L106 48 C106 82, 94 108, 80 120 C66 108, 54 82, 54 48 Z"
-          fill="#FFFBEB"
-          stroke="url(#goldGrad)"
+          d="M100 60 C80 34, 46 50, 46 80 C46 112, 85 138, 100 150 C115 138, 154 112, 154 80 C154 50, 120 34, 100 60 Z"
+          fill="url(#innerHeartGlow)"
+          stroke="url(#roseGoldGrad)"
           strokeWidth="3.5"
         />
 
-        {/* Shield Internal Border */}
+        {/* Inner Heart Dashed Accent */}
         <path
-          d="M80 38 L101 52 C101 80, 91 102, 80 113 C69 102, 59 80, 59 52 Z"
+          d="M100 67 C83 45, 54 58, 54 82 C54 108, 88 131, 100 142 C112 131, 146 108, 146 82 C146 58, 117 45, 100 67 Z"
           fill="none"
-          stroke="#F59E0B"
+          stroke="url(#roseGoldGrad)"
           strokeWidth="1.2"
+          strokeDasharray="4 2"
+          opacity="0.7"
         />
 
-        {/* Glowing Heart inside Shield */}
-        <path
-          d="M80 62 C74 52, 63 54, 63 65 C63 76, 73 85, 80 92 C87 85, 97 76, 97 65 C97 54, 86 52, 80 62 Z"
-          fill="url(#heartGrad)"
-        />
-
-        {/* Little Star at the Crown */}
-        <polygon
-          points="80,18 83,26 91,26 84,31 87,39 80,34 73,39 76,31 69,26 77,26"
-          fill="url(#goldGrad)"
-        />
-
-        {/* Bottom Banner Ribbon */}
-        <path
-          d="M26 132 L50 126 L80 130 L110 126 L134 132 L128 142 L110 138 L80 142 L50 138 L32 142 Z"
-          fill="url(#ribbonGrad)"
-          stroke="#B45309"
-          strokeWidth="1.5"
-        />
-
+        {/* ================= MONOGRAM "R & L" ================= */}
+        {/* Letter 'R' */}
         <text
-          x="80"
-          y="136"
+          x="77"
+          y="106"
           textAnchor="middle"
-          fontSize="6.5"
-          fontWeight="900"
-          letterSpacing="0.8"
-          fill="#92400E"
-          fontFamily="serif"
+          fontSize="42"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontWeight="bold"
+          fontStyle="italic"
+          fill="url(#roseGoldGrad)"
         >
-          KASIH SAYANG & SEPATU FUTSAL
+          R
         </text>
+
+        {/* Intertwined Heart Ampersand in the middle */}
+        <path
+          d="M100 87 C96 82, 90 84, 90 89 C90 94, 97 99, 100 102 C103 99, 110 94, 110 89 C110 84, 104 82, 100 87 Z"
+          fill="url(#goldAccent)"
+        />
+
+        {/* Letter 'L' */}
+        <text
+          x="122"
+          y="106"
+          textAnchor="middle"
+          fontSize="42"
+          fontFamily="Georgia, 'Times New Roman', serif"
+          fontWeight="bold"
+          fontStyle="italic"
+          fill="url(#roseGoldGrad)"
+        >
+          L
+        </text>
+
+        {/* Ribbon Banner at Bottom: "RIZKI & LISA" */}
+        <g>
+          {/* Ribbon Tail Left & Right */}
+          <path d="M38 152 L54 144 L54 162 L38 170 L44 161 Z" fill="#FDA4AF" stroke="#E11D48" strokeWidth="1" />
+          <path d="M162 152 L146 144 L146 162 L162 170 L156 161 Z" fill="#FDA4AF" stroke="#E11D48" strokeWidth="1" />
+
+          {/* Main Ribbon Body */}
+          <path
+            d="M48 146 C75 141, 125 141, 152 146 L148 165 C125 160, 75 160, 52 165 Z"
+            fill="url(#bannerGrad)"
+            stroke="url(#roseGoldGrad)"
+            strokeWidth="1.8"
+          />
+
+          {/* Banner Text */}
+          <text
+            x="100"
+            y="158"
+            textAnchor="middle"
+            fontSize="9.5"
+            fontWeight="bold"
+            fontFamily="Georgia, serif"
+            letterSpacing="2"
+            fill="#9F1239"
+          >
+            RIZKI &amp; LISA
+          </text>
+        </g>
       </svg>
     </div>
   );

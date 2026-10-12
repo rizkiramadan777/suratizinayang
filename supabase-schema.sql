@@ -12,6 +12,7 @@ create table if not exists permits (
   category text not null,
   category_name text,
   title text not null,
+  letter_content text,
   activity_description text,
   location text not null,
   event_date text not null,

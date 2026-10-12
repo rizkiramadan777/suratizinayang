@@ -63,6 +63,9 @@ export default function CreatePermitForm({ onSuccess }: CreatePermitFormProps) {
   const [endTime, setEndTime] = useState('22:00');
   const [companions, setCompanions] = useState('Rekan satu tim futsal');
   const [activityDescription, setActivityDescription] = useState('Pertandingan sparing futsal 5 vs 5');
+  const [letterContent, setLetterContent] = useState(
+    'Dengan penuh rasa hormat dan kasih sayang, saya bermaksud memohon izin dan restu kepada Lisa Suryani Purba untuk mengikuti kegiatan tersebut di atas. Saya berjanji akan menjaga amanah dan kepercayaan, senantiasa mengabari secara berkala, serta kembali tepat waktu.'
+  );
 
   // Add category state
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
@@ -197,6 +200,7 @@ export default function CreatePermitForm({ onSuccess }: CreatePermitFormProps) {
         category: selectedCategoryId,
         categoryName: activeCat?.label || selectedCategoryId,
         title: title.trim(),
+        letterContent: letterContent.trim(),
         activityDescription: activityDescription.trim(),
         location: location.trim(),
         eventDate,
@@ -437,11 +441,35 @@ export default function CreatePermitForm({ onSuccess }: CreatePermitFormProps) {
         </div>
       </div>
 
-      {/* 4. Pakta Integritas (Janji Setia) */}
+      {/* 4. Isi Surat Permohonan (Bisa Diedit Bebas) */}
+      <div className="rounded-2xl border border-pink-100 bg-white p-4 sm:p-5 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5" />
+            4. Isi Surat Permohonan (Bisa Kamu Ketik Sendiri)
+          </label>
+          <span className="text-[11px] text-pink-600 font-semibold bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">
+            Dapat Diedit Bebas
+          </span>
+        </div>
+        <p className="text-[11px] text-stone-500">
+          Ketik pesan, permohonan, atau alasan khusus kamu untuk Lisa Suryani Purba. Teks ini akan tampil langsung di badan surat resmi:
+        </p>
+        <textarea
+          rows={4}
+          required
+          value={letterContent}
+          onChange={(e) => setLetterContent(e.target.value)}
+          placeholder="Tuliskan isi pernyataan atau pesan permohonan izin kamu di sini..."
+          className="w-full rounded-xl border border-stone-200 p-3 text-xs sm:text-sm text-stone-900 leading-relaxed focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none bg-pink-50/20"
+        />
+      </div>
+
+      {/* 5. Pakta Integritas (Janji Setia) */}
       <div className="rounded-2xl border border-pink-100 bg-white p-4 sm:p-5 shadow-xs space-y-3">
         <label className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
           <Shield className="w-3.5 h-3.5" />
-          4. Pakta Integritas & Komitmen Bersama
+          5. Pakta Integritas & Komitmen Bersama
         </label>
         
         <div className="space-y-2">
@@ -483,11 +511,11 @@ export default function CreatePermitForm({ onSuccess }: CreatePermitFormProps) {
         </div>
       </div>
 
-      {/* 5. Tanda Tangan Pemohon */}
+      {/* 6. Tanda Tangan Pemohon */}
       <div className="rounded-2xl border border-pink-100 bg-white p-4 sm:p-5 shadow-xs space-y-3">
         <label className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
           <FileText className="w-3.5 h-3.5" />
-          5. Tanda Tangan Pemohon ({applicantName})
+          6. Tanda Tangan Pemohon ({applicantName})
         </label>
         <SignaturePad
           label="Tanda Tangan Digital Pemohon"

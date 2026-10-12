@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Check,
   Sparkles,
+  FileText,
 } from 'lucide-react';
 
 interface OfficialLetterViewProps {
@@ -137,8 +138,21 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
             </div>
           </div>
 
+          {/* Isi Surat Permohonan yang Diketik Sendiri */}
+          {permit.letterContent && (
+            <div className="my-3 rounded-xl border border-pink-200 bg-pink-50/60 p-3.5 sm:p-4 text-xs sm:text-sm text-stone-800 leading-relaxed border-l-4 border-l-pink-500 shadow-2xs">
+              <div className="text-[11px] font-bold text-pink-900 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                <FileText className="w-3.5 h-3.5 text-pink-600" />
+                <span>Pernyataan &amp; Isi Surat Pemohon:</span>
+              </div>
+              <p className="whitespace-pre-line text-stone-800">
+                {permit.letterContent}
+              </p>
+            </div>
+          )}
+
           <p>
-            Bermaksud mengajukan permohonan dispensasi waktu luar rumah dengan rincian agenda sebagai berikut:
+            Adapun rincian waktu, tempat, dan rekan yang mendampingi dalam agenda tersebut adalah sebagai berikut:
           </p>
 
           {/* Rincian Kegiatan Box */}

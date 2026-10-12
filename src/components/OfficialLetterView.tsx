@@ -264,22 +264,22 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
 
             {/* Tanda Tangan Pemohon (Rizki Ramadan) */}
             <div className="flex flex-col items-center">
-              <p className="text-[11px] text-stone-600 mb-1">Pemohon Izin,</p>
-              <div className="h-20 w-36 sm:w-44 flex items-center justify-center border-b border-stone-400 pb-1">
+              <p className="text-xs text-stone-600 mb-2">Pemohon Izin,</p>
+              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.applicantSignature ? (
                   <img
                     src={permit.applicantSignature}
                     alt="TTD Pemohon"
-                    className="max-h-full max-w-full object-contain filter drop-shadow-xs"
+                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
-                  <span className="text-[10px] text-stone-400 italic">Belum Bertanda Tangan</span>
+                  <span className="text-xs text-stone-400 italic">Belum Bertanda Tangan</span>
                 )}
               </div>
-              <p className="mt-1 text-xs font-bold text-stone-900 uppercase">
+              <p className="mt-2 text-xs font-bold text-stone-900 uppercase">
                 ( {permit.applicantName || 'Rizki Ramadan'} )
               </p>
-              <p className="text-[10px] text-pink-600 font-medium">Pemohon</p>
+              <p className="text-[11px] text-pink-600 font-medium">Pemohon</p>
             </div>
 
             {/* Bagian Tengah: e-Materai + Stempel Resmi */}
@@ -294,26 +294,26 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
 
             {/* Tanda Tangan Penyetuju (Lisa Suryani Purba) */}
             <div className="flex flex-col items-center">
-              <p className="text-[11px] text-stone-600 mb-1">
+              <p className="text-xs text-stone-600 mb-2">
                 Disahkan & Disetujui Oleh,
               </p>
-              <div className="h-20 w-36 sm:w-44 flex items-center justify-center border-b border-stone-400 pb-1">
+              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.approverSignature ? (
                   <img
                     src={permit.approverSignature}
                     alt="TTD Penyetuju"
-                    className="max-h-full max-w-full object-contain filter drop-shadow-xs"
+                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
-                  <span className="text-[10px] text-pink-500 italic font-medium">
+                  <span className="text-xs text-pink-500 italic font-medium">
                     Menunggu Tanda Tangan
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-xs font-bold text-stone-900 uppercase">
+              <p className="mt-2 text-xs font-bold text-stone-900 uppercase">
                 ( {permit.approverName || 'Lisa Suryani Purba'} )
               </p>
-              <p className="text-[10px] text-pink-600 font-medium">Pejabat Penyetuju Izin</p>
+              <p className="text-[11px] text-pink-600 font-medium">Pejabat Penyetuju Izin</p>
             </div>
           </div>
         </div>

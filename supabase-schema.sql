@@ -35,6 +35,9 @@ create table if not exists permits (
 -- Aktifkan Row Level Security (RLS)
 alter table permits enable row level security;
 
+-- Hapus policy lama jika ada (agar aman dijalankan ulang)
+drop policy if exists "Allow all operations for public permit access" on permits;
+
 -- Buat policy publik (bisa baca, buat, dan update surat dengan ID yang valid)
 create policy "Allow all operations for public permit access"
 on permits for all

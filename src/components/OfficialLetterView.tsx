@@ -260,29 +260,17 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
 
         {/* ===================== AREA TANDA TANGAN & STEMPEL ===================== */}
         <div className="mt-8 pt-4 border-t-2 border-pink-200">
-
-          {/* Baris Materai + Stempel - di tengah atas */}
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <Materai date={permit.eventDate} />
-            <Stamp
-              status={permit.status}
-              date={permit.decidedAt || permit.createdAt}
-              approverName={permit.approverName || 'Lisa Suryani Purba'}
-            />
-          </div>
-
-          {/* 2 Kolom TTD: Rizki (kiri) & Lisa (kanan) */}
-          <div className="grid grid-cols-2 gap-8 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end text-center">
 
             {/* Tanda Tangan Pemohon (Rizki Ramadan) */}
             <div className="flex flex-col items-center">
-              <p className="text-xs text-stone-600 mb-3">Pemohon Izin,</p>
-              <div className="h-36 w-full flex items-center justify-center border-b-2 border-stone-400">
+              <p className="text-xs text-stone-600 mb-2">Pemohon Izin,</p>
+              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.applicantSignature ? (
                   <img
                     src={permit.applicantSignature}
                     alt="TTD Pemohon"
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
                   <span className="text-xs text-stone-400 italic">Belum Bertanda Tangan</span>
@@ -294,17 +282,27 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
               <p className="text-[11px] text-pink-600 font-medium">Pemohon</p>
             </div>
 
+            {/* Bagian Tengah: e-Materai + Stempel Resmi */}
+            <div className="flex flex-col items-center justify-center my-2 sm:my-0 space-y-2">
+              <Materai date={permit.eventDate} />
+              <Stamp
+                status={permit.status}
+                date={permit.decidedAt || permit.createdAt}
+                approverName={permit.approverName || 'Lisa Suryani Purba'}
+              />
+            </div>
+
             {/* Tanda Tangan Penyetuju (Lisa Suryani Purba) */}
             <div className="flex flex-col items-center">
-              <p className="text-xs text-stone-600 mb-3">
-                Disahkan &amp; Disetujui Oleh,
+              <p className="text-xs text-stone-600 mb-2">
+                Disahkan & Disetujui Oleh,
               </p>
-              <div className="h-36 w-full flex items-center justify-center border-b-2 border-stone-400">
+              <div className="h-28 w-full flex items-center justify-center border-b-2 border-stone-400 pb-1">
                 {permit.approverSignature ? (
                   <img
                     src={permit.approverSignature}
                     alt="TTD Penyetuju"
-                    className="h-full w-full object-contain"
+                    className="h-full w-full object-contain filter drop-shadow-sm"
                   />
                 ) : (
                   <span className="text-xs text-pink-500 italic font-medium">
@@ -317,10 +315,8 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
               </p>
               <p className="text-[11px] text-pink-600 font-medium">Pejabat Penyetuju Izin</p>
             </div>
-
           </div>
         </div>
-
 
         {/* ===================== FOOTER DOKUMEN ===================== */}
         <div className="mt-8 pt-3 border-t border-pink-100 text-center text-[9.5px] text-stone-500 font-mono">

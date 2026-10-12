@@ -24,8 +24,8 @@ export default function SignaturePad({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
-  const [strokeColor, setStrokeColor] = useState('#1E3A8A');
-  const [lineWidth, setLineWidth] = useState(4);
+  const [strokeColor, setStrokeColor] = useState('#1E3A8A'); // Tinta biru resmi
+  const [lineWidth, setLineWidth] = useState(4.5);
   const [history, setHistory] = useState<ImageData[]>([]);
 
   // Setup canvas size with DPI scaling
@@ -198,8 +198,8 @@ export default function SignaturePad({
 
       {/* Controls Bar */}
       <div className="flex items-center justify-between text-xs pt-1">
-        {/* Ink Color Picker */}
-        <div className="flex items-center gap-1.5">
+        {/* Ink & Thickness Controls */}
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="text-[11px] text-gray-500">Tinta:</span>
           {[
             { color: '#1E3A8A', name: 'Biru Resmi' },
@@ -218,6 +218,26 @@ export default function SignaturePad({
               style={{ backgroundColor: item.color }}
               title={item.name}
             />
+          ))}
+          <span className="text-[11px] text-gray-400 mx-1">|</span>
+          <span className="text-[11px] text-gray-500">Tebal:</span>
+          {[
+            { size: 3, label: 'S' },
+            { size: 4.5, label: 'M' },
+            { size: 7, label: 'L' },
+          ].map((item) => (
+            <button
+              key={item.size}
+              type="button"
+              onClick={() => setLineWidth(item.size)}
+              className={`h-6 w-6 rounded-full text-[10px] font-bold border transition-all flex items-center justify-center ${
+                lineWidth === item.size
+                  ? 'bg-rose-500 text-white border-rose-500 scale-110'
+                  : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200'
+              }`}
+            >
+              {item.label}
+            </button>
           ))}
         </div>
 

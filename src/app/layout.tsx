@@ -1,0 +1,46 @@
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "SI-IZIN AYANG | Portal Resmi Permohonan Izin Pasangan (KIP-RI)",
+  description: "Aplikasi pengajuan surat izin keluar, futsal, dan nongkrong resmi untuk pasangan dengan tanda tangan digital dan stempel sah.",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html
+      lang="id"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col bg-[#F8F7F4] text-stone-900 selection:bg-rose-200 selection:text-rose-900">
+        {children}
+      </body>
+    </html>
+  );
+}

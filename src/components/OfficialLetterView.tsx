@@ -283,7 +283,6 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
                     src={permit.applicantSignature}
                     alt="TTD Pemohon"
                     className="h-full w-full object-contain"
-                    style={{ maxHeight: '140px' }}
                   />
                 ) : (
                   <span className="text-xs text-stone-400 italic">Belum Bertanda Tangan</span>
@@ -306,7 +305,6 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
                     src={permit.approverSignature}
                     alt="TTD Penyetuju"
                     className="h-full w-full object-contain"
-                    style={{ maxHeight: '140px' }}
                   />
                 ) : (
                   <span className="text-xs text-pink-500 italic font-medium">

@@ -18,14 +18,14 @@ export default function SignaturePad({
   onClear,
   label = 'Tanda Tangan Digital',
   subLabel = 'Gunakan jari atau stylus untuk menandatangani',
-  height = 160,
+  height = 200,
 }: SignaturePadProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
-  const [strokeColor, setStrokeColor] = useState('#1E3A8A'); // Tinta biru resmi
-  const [lineWidth, setLineWidth] = useState(2.5);
+  const [strokeColor, setStrokeColor] = useState('#1E3A8A');
+  const [lineWidth, setLineWidth] = useState(4);
   const [history, setHistory] = useState<ImageData[]>([]);
 
   // Setup canvas size with DPI scaling

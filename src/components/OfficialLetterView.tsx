@@ -28,11 +28,11 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
   ({ permit, id = 'official-permit-letter' }, ref) => {
     const formattedDate = permit.eventDate
       ? new Date(permit.eventDate).toLocaleDateString('id-ID', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      })
       : '-';
 
     const categoryTitle = permit.categoryName || permit.category.toUpperCase();
@@ -112,7 +112,7 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
             {permit.approverName || 'Lisa Suryani Purba'}
           </p>
           <p className="text-stone-600 italic text-[11px] sm:text-xs">
-            Selaku Pemegang Otoritas Tunggal & Pemeriksa Berkas Resmi
+            Selaku Pemegang Otoritas Kekuasaan Penuh & Atasan Segala Atasan
           </p>
           <p className="text-stone-600 text-xs">Di Tempat</p>
         </div>
@@ -261,7 +261,7 @@ const OfficialLetterView = forwardRef<HTMLDivElement, OfficialLetterViewProps>(
         {/* ===================== AREA TANDA TANGAN & STEMPEL ===================== */}
         <div className="mt-8 pt-4 border-t-2 border-pink-200">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 items-end text-center">
-            
+
             {/* Tanda Tangan Pemohon (Rizki Ramadan) */}
             <div className="flex flex-col items-center">
               <p className="text-[11px] text-stone-600 mb-1">Pemohon Izin,</p>

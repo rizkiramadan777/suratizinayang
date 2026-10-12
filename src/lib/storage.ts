@@ -251,18 +251,10 @@ export async function deletePermit(id: string): Promise<boolean> {
   return true;
 }
 
-// Encode permit to share URL
+// Encode permit to share URL - hanya gunakan ID, bukan encode seluruh data
 export function encodePermitToUrl(permit: PermitLetter, baseUrl?: string): string {
-  try {
-    const jsonStr = JSON.stringify(permit);
-    const encoded = typeof window !== 'undefined' ? btoa(encodeURIComponent(jsonStr)) : '';
-    const origin = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
-    return `${origin}/letter/${permit.id}?data=${encoded}`;
-  } catch (e) {
-    console.error('Error encoding permit to URL:', e);
-    const origin = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
-    return `${origin}/letter/${permit.id}`;
-  }
+  const origin = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');
+  return `${origin}/letter/${permit.id}`;
 }
 
 // Decode permit from share URL

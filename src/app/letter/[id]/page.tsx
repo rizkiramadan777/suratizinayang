@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState, useRef, Suspense } from 'react';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { PermitLetter } from '@/types/permit';
-import { getPermitById, decodePermitFromDataParam } from '@/lib/storage';
+import { getPermitById } from '@/lib/storage';
 import OfficialLetterView from '@/components/OfficialLetterView';
 import ReviewPermitAction from '@/components/ReviewPermitAction';
 import ShareModal from '@/components/ShareModal';
@@ -13,9 +13,7 @@ import { ArrowLeft, Share2, Download, Heart, Loader2, FileX } from 'lucide-react
 
 function LetterDetailContent() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const id = params?.id as string;
-  const dataParam = searchParams.get('data');
 
   const [permit, setPermit] = useState<PermitLetter | null>(null);
   const [loading, setLoading] = useState(true);
@@ -26,29 +24,14 @@ function LetterDetailContent() {
   useEffect(() => {
     async function loadLetter() {
       setLoading(true);
-
-      // Check if data is passed via URL query
-      if (dataParam) {
-        const decoded = decodePermitFromDataParam(dataParam);
-        if (decoded) {
-          setPermit(decoded);
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Check DB or local storage
       if (id) {
         const loaded = await getPermitById(id);
-        if (loaded) {
-          setPermit(loaded);
-        }
+        if (loaded) setPermit(loaded);
       }
       setLoading(false);
     }
-
     loadLetter();
-  }, [id, dataParam]);
+  }, [id]);
 
   const handleDownloadImage = async () => {
     if (!letterRef.current || !permit) return;

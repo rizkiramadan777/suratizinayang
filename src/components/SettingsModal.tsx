@@ -11,8 +11,9 @@ import {
   Database,
   Phone,
   Check,
-  ShieldAlert,
   Save,
+  AlertCircle,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface SettingsModalProps {
@@ -50,22 +51,21 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
     setIsTestingDb(true);
     setDbStatus('');
     try {
-      // Temporarily store in memory or local to test
       saveStoredProfile(profile);
       const client = getSupabaseClient();
       if (!client) {
-        setDbStatus('⚠️ URL / Key Supabase belum lengkap.');
+        setDbStatus('URL atau Key Supabase belum lengkap.');
         setIsTestingDb(false);
         return;
       }
       const { data, error } = await client.from('permits').select('id').limit(1);
       if (error) {
-        setDbStatus(`❌ Gagal terhubung: ${error.message}`);
+        setDbStatus(`Gagal terhubung: ${error.message}`);
       } else {
-        setDbStatus('✅ Terhubung sukses ke Supabase Database!');
+        setDbStatus('Berhasil terhubung ke Supabase Database.');
       }
     } catch (err: any) {
-      setDbStatus(`❌ Error koneksi: ${err.message || 'Gagal'}`);
+      setDbStatus(`Error koneksi: ${err.message || 'Gagal'}`);
     } finally {
       setIsTestingDb(false);
     }
@@ -83,13 +83,13 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
           <X className="w-5 h-5" />
         </button>
 
-        <div className="flex items-center gap-3 border-b border-stone-200 pb-3">
-          <div className="rounded-2xl bg-rose-100 p-2.5 text-rose-600">
+        <div className="flex items-center gap-3 border-b border-pink-100 pb-3">
+          <div className="rounded-2xl bg-pink-100 p-2.5 text-pink-600">
             <Settings className="w-6 h-6" />
           </div>
           <div>
             <h3 className="text-base font-bold text-stone-900">
-              Pengaturan Profil & Cloud Sync
+              Pengaturan Profil Pasangan
             </h3>
             <p className="text-xs text-stone-500">
               Konfigurasi data pasangan dan koneksi Supabase Cloud
@@ -99,41 +99,41 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
 
         {savedSuccess && (
           <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 font-semibold flex items-center gap-2">
-            <Check className="w-4 h-4 text-emerald-600" />
-            Pengaturan berhasil disimpan!
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span>Pengaturan berhasil disimpan.</span>
           </div>
         )}
 
         {/* 1. Profil Pasangan */}
         <div className="space-y-3">
-          <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-            <Heart className="w-3.5 h-3.5 text-rose-500" />
-            Identitas Default Pasangan
+          <h4 className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
+            <Heart className="w-3.5 h-3.5 text-pink-600" />
+            Identitas Resmi Pasangan
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-stone-700 block mb-1">
-                Nama Kamu (Cowok)
+                Nama Pemohon (Pria)
               </label>
               <input
                 type="text"
                 value={profile.maleName}
                 onChange={(e) => setProfile({ ...profile, maleName: e.target.value })}
-                placeholder="Contoh: Ahmad"
-                className="w-full rounded-xl border border-stone-300 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                placeholder="Rizki Ramadan"
+                className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
             <div>
               <label className="text-xs font-medium text-stone-700 block mb-1">
-                Nama Pasangan (Ayang)
+                Nama Pasangan (Penyetuju)
               </label>
               <input
                 type="text"
                 value={profile.femaleName}
                 onChange={(e) => setProfile({ ...profile, femaleName: e.target.value })}
-                placeholder="Contoh: Ayang Tercinta"
-                className="w-full rounded-xl border border-stone-300 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+                placeholder="Lisa Suryani Purba"
+                className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
           </div>
@@ -141,33 +141,33 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
           <div>
             <label className="text-xs font-medium text-stone-700 block mb-1 flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5 text-emerald-600" />
-              Nomor WhatsApp Ayang (Format: 628xxxxxxxx)
+              Nomor WhatsApp Lisa (Format: 628xxxxxxxx)
             </label>
             <input
               type="text"
               value={profile.whatsappFemale || ''}
               onChange={(e) => setProfile({ ...profile, whatsappFemale: e.target.value })}
-              placeholder="Contoh: 6281234567890 (otomatis buka chat Ayang)"
-              className="w-full rounded-xl border border-stone-300 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+              placeholder="Contoh: 6281234567890"
+              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
             />
             <p className="text-[10px] text-stone-400 mt-1">
-              Jika diisi, tombol kirim surat akan otomatis membuka chat WhatsApp langsung ke nomor Ayang.
+              Jika nomor diisi, tombol bagikan akan langsung membuka chat WhatsApp ke kontak Lisa Suryani Purba.
             </p>
           </div>
         </div>
 
         {/* 2. Supabase Integration */}
-        <div className="space-y-3 pt-3 border-t border-stone-200">
+        <div className="space-y-3 pt-3 border-t border-pink-100">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-stone-500 flex items-center gap-1.5">
-              <Database className="w-3.5 h-3.5 text-indigo-500" />
+            <h4 className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
+              <Database className="w-3.5 h-3.5 text-pink-600" />
               Database Supabase (Opsional)
             </h4>
-            <span className="text-[10px] text-stone-400">Real-time sync</span>
+            <span className="text-[10px] text-stone-400">Sinkronisasi Cloud</span>
           </div>
 
           <p className="text-xs text-stone-600">
-            Jika diisi, surat akan tersimpan di cloud Supabase secara real-time. Jika dikosongkan, aplikasi tetap 100% berjalan lancar via LocalStorage & URL State!
+            Digunakan untuk menyimpan data secara online real-time. Jika dikosongkan, aplikasi tetap berfungsi normal via LocalStorage dan tautan URL.
           </p>
 
           <div>
@@ -178,8 +178,8 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
               type="text"
               value={profile.supabaseUrl || ''}
               onChange={(e) => setProfile({ ...profile, supabaseUrl: e.target.value })}
-              placeholder="https://xyzcompany.supabase.co"
-              className="w-full rounded-xl border border-stone-300 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              placeholder="https://yourproject.supabase.co"
+              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
             />
           </div>
 
@@ -192,7 +192,7 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
               value={profile.supabaseKey || ''}
               onChange={(e) => setProfile({ ...profile, supabaseKey: e.target.value })}
               placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              className="w-full rounded-xl border border-stone-300 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
             />
           </div>
 
@@ -201,11 +201,11 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
               type="button"
               disabled={isTestingDb}
               onClick={handleTestSupabase}
-              className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-100 disabled:opacity-50"
+              className="rounded-xl border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-100 disabled:opacity-50"
             >
               {isTestingDb ? 'Menguji Koneksi...' : 'Uji Koneksi Supabase'}
             </button>
-            {dbStatus && <span className="text-xs font-medium">{dbStatus}</span>}
+            {dbStatus && <span className="text-xs font-medium text-stone-600">{dbStatus}</span>}
           </div>
         </div>
 
@@ -214,7 +214,7 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
           <button
             type="button"
             onClick={handleSave}
-            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-rose-600 py-3 px-4 text-xs sm:text-sm font-bold text-white hover:bg-rose-700 transition-colors shadow-md"
+            className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-pink-600 py-3 px-4 text-xs sm:text-sm font-bold text-white hover:bg-pink-700 transition-colors shadow-md shadow-pink-600/20"
           >
             <Save className="w-4 h-4" />
             <span>Simpan Pengaturan</span>

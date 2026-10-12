@@ -15,7 +15,7 @@ import {
   Trash2,
   Eye,
   Search,
-  Filter,
+  FileText,
 } from 'lucide-react';
 
 interface PermitHistoryProps {
@@ -39,7 +39,8 @@ export default function PermitHistory({
     const matchesSearch =
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.letterNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.location.toLowerCase().includes(searchQuery.toLowerCase());
+      p.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (p.categoryName && p.categoryName.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesStatus && matchesSearch;
   });
 
@@ -69,8 +70,8 @@ export default function PermitHistory({
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-[11px] font-bold text-red-800">
-            <XCircle className="w-3 h-3 text-red-600" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2.5 py-0.5 text-[11px] font-bold text-rose-800">
+            <XCircle className="w-3 h-3 text-rose-600" />
             DITOLAK
           </span>
         );
@@ -94,8 +95,8 @@ export default function PermitHistory({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari surat izin, nomor, atau lokasi..."
-            className="w-full rounded-2xl border border-stone-200 bg-white pl-10 pr-4 py-2.5 text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-200"
+            placeholder="Cari surat izin, nomor, atau lokasi kegiatan..."
+            className="w-full rounded-2xl border border-stone-200 bg-white pl-10 pr-4 py-2.5 text-xs sm:text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-200"
           />
         </div>
 
@@ -112,8 +113,8 @@ export default function PermitHistory({
               onClick={() => setFilterStatus(tab.id)}
               className={`rounded-xl px-3 py-2 text-xs font-semibold whitespace-nowrap transition-all ${
                 filterStatus === tab.id
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+                  ? 'bg-pink-600 text-white shadow-xs'
+                  : 'bg-white border border-stone-200 text-stone-600 hover:bg-pink-50/50'
               }`}
             >
               {tab.label}
@@ -124,17 +125,17 @@ export default function PermitHistory({
 
       {/* List Content */}
       {filteredPermits.length === 0 ? (
-        <div className="rounded-3xl border-2 border-dashed border-stone-200 bg-white/60 p-8 text-center space-y-3">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-2xl">
-            📜
+        <div className="rounded-3xl border-2 border-dashed border-pink-200 bg-white/70 p-8 text-center space-y-3">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-pink-500">
+            <FileText className="w-7 h-7" />
           </div>
           <h4 className="text-sm font-bold text-stone-800">
             Belum Ada Arsip Surat Izin
           </h4>
           <p className="text-xs text-stone-500 max-w-sm mx-auto">
             {searchQuery
-              ? 'Tidak ada surat izin yang cocok dengan kata kunci pencarian.'
-              : 'Belum ada surat permohonan yang diajukan. Yuk ajukan izin futsal atau nongkrong sekarang!'}
+              ? 'Tidak ada permohonan yang sesuai dengan kata kunci pencarian.'
+              : 'Belum ada surat permohonan izin yang diterbitkan. Silakan buat permohonan baru.'}
           </p>
         </div>
       ) : (
@@ -143,14 +144,14 @@ export default function PermitHistory({
             <div
               key={item.id}
               onClick={() => onSelectPermit(item)}
-              className="group relative cursor-pointer rounded-2xl border border-stone-200 bg-white p-4 shadow-xs transition-all hover:border-rose-300 hover:shadow-md"
+              className="group relative cursor-pointer rounded-2xl border border-pink-100 bg-white p-4 shadow-xs transition-all hover:border-pink-300 hover:shadow-md"
             >
               <div className="flex items-start justify-between gap-2 mb-2">
                 <div>
                   <span className="text-[10px] font-mono text-stone-400 block mb-0.5">
                     {item.letterNumber}
                   </span>
-                  <h4 className="text-sm font-bold text-stone-900 group-hover:text-rose-600 transition-colors">
+                  <h4 className="text-sm font-bold text-stone-900 group-hover:text-pink-600 transition-colors">
                     {item.title}
                   </h4>
                 </div>
@@ -159,7 +160,7 @@ export default function PermitHistory({
 
               <div className="space-y-1 text-xs text-stone-600 my-3">
                 <div className="flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-rose-500" />
+                  <Calendar className="w-3.5 h-3.5 text-pink-500" />
                   <span>
                     {new Date(item.eventDate).toLocaleDateString('id-ID', {
                       day: 'numeric',
@@ -168,21 +169,21 @@ export default function PermitHistory({
                     })}
                   </span>
                   <span className="text-stone-300">•</span>
-                  <Clock className="w-3.5 h-3.5 text-amber-500" />
+                  <Clock className="w-3.5 h-3.5 text-pink-500" />
                   <span>
                     {item.startTime} - {item.endTime} WIB
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 text-stone-500">
-                  <MapPin className="w-3.5 h-3.5 text-emerald-500" />
+                  <MapPin className="w-3.5 h-3.5 text-pink-500" />
                   <span className="truncate">{item.location}</span>
                 </div>
               </div>
 
               {/* Action Toolbar */}
-              <div className="flex items-center justify-between border-t border-stone-100 pt-2.5 mt-2">
+              <div className="flex items-center justify-between border-t border-pink-50 pt-2.5 mt-2">
                 <span className="text-[11px] text-stone-400">
-                  Untuk: <strong>{item.approverName}</strong>
+                  Untuk: <strong>{item.approverName || 'Lisa Suryani Purba'}</strong>
                 </span>
 
                 <div className="flex items-center gap-1">
@@ -192,7 +193,7 @@ export default function PermitHistory({
                       e.stopPropagation();
                       onShare(item);
                     }}
-                    className="p-1.5 rounded-lg text-stone-500 hover:bg-stone-100 hover:text-stone-800"
+                    className="p-1.5 rounded-lg text-stone-500 hover:bg-pink-50 hover:text-pink-700"
                     title="Bagikan ke WhatsApp"
                   >
                     <Share2 className="w-3.5 h-3.5" />
@@ -209,7 +210,7 @@ export default function PermitHistory({
 
                   <button
                     type="button"
-                    className="flex items-center gap-1 text-xs font-bold text-rose-600 hover:text-rose-700 ml-1"
+                    className="flex items-center gap-1 text-xs font-bold text-pink-600 hover:text-pink-700 ml-1"
                   >
                     <span>Buka</span>
                     <Eye className="w-3.5 h-3.5" />

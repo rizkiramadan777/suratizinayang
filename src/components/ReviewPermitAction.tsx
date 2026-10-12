@@ -15,6 +15,8 @@ import {
   FileCheck2,
   Share2,
   Download,
+  ShieldCheck,
+  Check,
 } from 'lucide-react';
 
 interface ReviewPermitActionProps {
@@ -25,17 +27,17 @@ interface ReviewPermitActionProps {
 }
 
 const PRESET_DEMANDS = [
-  'Wajib bawain Seblak / Makanan favorit pas pulang',
-  'Denda Rp 50.000 per 10 menit jika lewat dari jam batas',
-  'Besok wajib nemenin jalan seharian tanpa mengeluh',
-  'Kirim PAP wajah ganteng tiap 45 menit sekali',
+  'Wajib membawakan makanan atau minuman favorit saat perjalanan pulang',
+  'Denda keterlambatan jika melewati batas jam yang telah disepakati',
+  'Menemani Lisa jalan-jalan atau berbelanja di akhir pekan',
+  'Mengirimkan kabar dan dokumentasi setiap 45 menit sekali',
 ];
 
 const REJECT_REASONS = [
-  'Kemarin udah keluar, hari ini jatah di rumah bareng Ayang!',
-  'Batas jam malam terlalu larut, berbahaya bagi ketentraman batin.',
-  'Harus nemenin Ayang nonton serial & teleponan.',
-  'Teman-temannya terlalu asyik, nanti lupa waktu.',
+  'Sudah izin kemarin, hari ini agenda bersama Lisa di rumah.',
+  'Batas jam malam terlalu larut dan kurang aman.',
+  'Ada agenda keluarga atau keperluan penting bersama yang harus didahulukan.',
+  'Perlu istirahat yang cukup untuk kesehatan.',
 ];
 
 export default function ReviewPermitAction({
@@ -52,34 +54,37 @@ export default function ReviewPermitAction({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  const applicant = permit.applicantName || 'Rizki Ramadan';
+  const approver = permit.approverName || 'Lisa Suryani Purba';
+
   // If already reviewed
   if (permit.status !== 'pending') {
     return (
-      <div className="rounded-2xl border border-stone-200 bg-white p-5 shadow-lg space-y-4 text-center">
+      <div className="rounded-2xl border border-pink-200 bg-white p-5 shadow-lg space-y-4 text-center">
         <div className="flex items-center justify-center">
           {permit.status === 'approved' && (
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-4 py-1.5 text-xs font-bold text-emerald-800">
               <CheckCircle className="w-4 h-4 text-emerald-600" />
-              SURAT INI TELAH DISETUJUI RESMI
+              SURAT TELAH DISETUJUI RESMI
             </div>
           )}
           {permit.status === 'conditional' && (
             <div className="inline-flex items-center gap-2 rounded-full bg-amber-100 px-4 py-1.5 text-xs font-bold text-amber-800">
               <AlertTriangle className="w-4 h-4 text-amber-600" />
-              SURAT INI DISETUJUI DENGAN SYARAT
+              SURAT DISETUJUI DENGAN SYARAT
             </div>
           )}
           {permit.status === 'rejected' && (
-            <div className="inline-flex items-center gap-2 rounded-full bg-red-100 px-4 py-1.5 text-xs font-bold text-red-800">
-              <XCircle className="w-4 h-4 text-red-600" />
-              PERMOHONAN RESMI TELAH DITOLAK
+            <div className="inline-flex items-center gap-2 rounded-full bg-rose-100 px-4 py-1.5 text-xs font-bold text-rose-800">
+              <XCircle className="w-4 h-4 text-rose-600" />
+              PERMOHONAN IZIN DITOLAK
             </div>
           )}
         </div>
 
         <p className="text-xs text-stone-600">
-          Surat izin nomor <strong>{permit.letterNumber}</strong> telah disahkan oleh{' '}
-          <strong>{permit.approverName}</strong> pada{' '}
+          Surat permohonan nomor <strong>{permit.letterNumber}</strong> telah disahkan oleh{' '}
+          <strong>{approver}</strong> pada{' '}
           {permit.decidedAt ? new Date(permit.decidedAt).toLocaleString('id-ID') : '-'}
         </p>
 
@@ -88,10 +93,10 @@ export default function ReviewPermitAction({
             <button
               type="button"
               onClick={onOpenShareModal}
-              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 transition-colors shadow-sm"
+              className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-pink-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-pink-700 transition-colors shadow-sm"
             >
               <Share2 className="w-4 h-4" />
-              Bagikan ke WhatsApp
+              <span>Bagikan ke WhatsApp</span>
             </button>
           )}
 
@@ -102,7 +107,7 @@ export default function ReviewPermitAction({
               className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-stone-900 px-4 py-2.5 text-xs font-bold text-white hover:bg-stone-800 transition-colors shadow-sm"
             >
               <Download className="w-4 h-4" />
-              Unduh Surat Sah (PNG)
+              <span>Unduh Surat Sah (PNG)</span>
             </button>
           )}
         </div>
@@ -127,7 +132,7 @@ export default function ReviewPermitAction({
         particleCount: 80,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ['#EF4444', '#F43F5E', '#F59E0B', '#10B981'],
+        colors: ['#EC4899', '#F43F5E', '#FB7185', '#FDA4AF'],
       });
     } catch (e) {
       // ignore
@@ -138,7 +143,7 @@ export default function ReviewPermitAction({
     setErrorMsg('');
 
     if (!signature) {
-      setErrorMsg('Ayang wajib memberikan tanda tangan digital terlebih dahulu!');
+      setErrorMsg(`Mohon bubuhkan tanda tangan digital ${approver} terlebih dahulu.`);
       return;
     }
 
@@ -164,29 +169,29 @@ export default function ReviewPermitAction({
       onUpdated(updated);
     } catch (err: any) {
       console.error(err);
-      setErrorMsg('Gagal memproses keputusan surat.');
+      setErrorMsg('Gagal memproses keputusan permohonan.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="rounded-2xl border-2 border-rose-200 bg-white p-4 sm:p-6 shadow-xl space-y-5">
-      <div className="border-b border-stone-200 pb-3">
+    <div className="rounded-2xl border-2 border-pink-200 bg-white p-4 sm:p-6 shadow-xl space-y-5">
+      <div className="border-b border-pink-100 pb-3">
         <div className="flex items-center gap-2">
-          <Heart className="h-5 w-5 text-rose-500 fill-rose-500 animate-pulse" />
+          <Heart className="h-5 w-5 text-pink-500 fill-pink-500" />
           <h3 className="text-base font-bold text-stone-900">
-            Meja Pengesahan & Keputusan Ayang
+            Meja Pengesahan & Keputusan ({approver})
           </h3>
         </div>
         <p className="text-xs text-stone-500 mt-0.5">
-          Tentukan nasib permohonan izin dari <strong>{permit.applicantName}</strong>
+          Tinjau dan tentukan status permohonan izin dari <strong>{applicant}</strong>
         </p>
       </div>
 
       {errorMsg && (
         <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700 font-medium">
-          ⚠️ {errorMsg}
+          {errorMsg}
         </div>
       )}
 
@@ -207,7 +212,7 @@ export default function ReviewPermitAction({
             }`}
           >
             <CheckCircle className="h-5 w-5 text-emerald-600 mb-1" />
-            <span className="text-xs font-bold">DISETUJUI PENUH</span>
+            <span className="text-xs font-bold">DISETUJUI RESMI</span>
             <span className="text-[10px] text-stone-500">Izin diberikan sepenuhnya</span>
           </button>
 
@@ -222,8 +227,8 @@ export default function ReviewPermitAction({
             }`}
           >
             <AlertTriangle className="h-5 w-5 text-amber-600 mb-1" />
-            <span className="text-xs font-bold">ACC BERSYARAT</span>
-            <span className="text-[10px] text-stone-500">Boleh, asal penuhi klausul</span>
+            <span className="text-xs font-bold">DISETUJUI BERSYARAT</span>
+            <span className="text-[10px] text-stone-500">Wajib penuhi syarat</span>
           </button>
 
           {/* 3. TOLAK */}
@@ -232,13 +237,13 @@ export default function ReviewPermitAction({
             onClick={() => setSelectedDecision('rejected')}
             className={`flex flex-col items-center justify-center rounded-xl border-2 p-3 text-center transition-all ${
               selectedDecision === 'rejected'
-                ? 'border-red-500 bg-red-50 text-red-900 shadow-sm ring-2 ring-red-300'
+                ? 'border-rose-500 bg-rose-50 text-rose-900 shadow-sm ring-2 ring-rose-300'
                 : 'border-stone-200 bg-stone-50/50 hover:bg-stone-100 text-stone-700'
             }`}
           >
-            <XCircle className="h-5 w-5 text-red-600 mb-1" />
+            <XCircle className="h-5 w-5 text-rose-600 mb-1" />
             <span className="text-xs font-bold">TOLAK PERMOHONAN</span>
-            <span className="text-[10px] text-stone-500">Tetap di rumah bersamaku</span>
+            <span className="text-[10px] text-stone-500">Tetap berkegiatan bersama</span>
           </button>
         </div>
       </div>
@@ -247,7 +252,7 @@ export default function ReviewPermitAction({
       {selectedDecision === 'conditional' && (
         <div className="rounded-xl border border-amber-300 bg-amber-50/60 p-4 space-y-3">
           <label className="text-xs font-bold text-amber-900 block">
-            Daftar Tuntutan & Syarat Wajib Dipenuhi:
+            Daftar Syarat & Ketentuan Tambahan dari {approver}:
           </label>
 
           <div className="space-y-1.5">
@@ -256,7 +261,7 @@ export default function ReviewPermitAction({
                 key={i}
                 className="flex items-center justify-between rounded-lg bg-white px-3 py-1.5 text-xs text-stone-800 shadow-2xs border border-amber-200"
               >
-                <span>• {demand}</span>
+                <span>{demand}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveDemand(i)}
@@ -268,7 +273,6 @@ export default function ReviewPermitAction({
             ))}
           </div>
 
-          {/* Quick preset buttons */}
           <div className="flex flex-wrap gap-1.5 pt-1">
             {PRESET_DEMANDS.map((item, index) => (
               <button
@@ -277,9 +281,10 @@ export default function ReviewPermitAction({
                 onClick={() => {
                   if (!demands.includes(item)) setDemands([...demands, item]);
                 }}
-                className="rounded-full bg-amber-200/70 hover:bg-amber-300 px-2.5 py-1 text-[10px] font-semibold text-amber-950 transition-colors"
+                className="rounded-full bg-amber-200/70 hover:bg-amber-300 px-2.5 py-1 text-[10px] font-semibold text-amber-950 transition-colors flex items-center gap-1"
               >
-                + {item}
+                <Plus className="w-3 h-3" />
+                <span>{item}</span>
               </button>
             ))}
           </div>
@@ -289,7 +294,7 @@ export default function ReviewPermitAction({
               type="text"
               value={newDemandInput}
               onChange={(e) => setNewDemandInput(e.target.value)}
-              placeholder="Ketik tuntutan lainnya..."
+              placeholder="Tulis syarat tambahan lainnya..."
               className="flex-1 rounded-xl border border-amber-300 bg-white px-3 py-1.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-400"
             />
             <button
@@ -305,8 +310,8 @@ export default function ReviewPermitAction({
 
       {/* Reject Preset Reasons */}
       {selectedDecision === 'rejected' && (
-        <div className="rounded-xl border border-red-200 bg-red-50/60 p-4 space-y-2">
-          <label className="text-xs font-bold text-red-900 block">
+        <div className="rounded-xl border border-rose-200 bg-rose-50/60 p-4 space-y-2">
+          <label className="text-xs font-bold text-rose-900 block">
             Pilih Alasan Penolakan:
           </label>
           <div className="space-y-1.5">
@@ -317,11 +322,11 @@ export default function ReviewPermitAction({
                 onClick={() => setApproverNotes(reason)}
                 className={`w-full text-left rounded-lg p-2 text-xs transition-colors border ${
                   approverNotes === reason
-                    ? 'border-red-400 bg-white text-red-950 font-bold'
-                    : 'border-red-200 bg-white/70 text-red-800 hover:bg-white'
+                    ? 'border-rose-400 bg-white text-rose-950 font-bold'
+                    : 'border-rose-200 bg-white/70 text-rose-800 hover:bg-white'
                 }`}
               >
-                &ldquo;{reason}&rdquo;
+                {reason}
               </button>
             ))}
           </div>
@@ -331,22 +336,22 @@ export default function ReviewPermitAction({
       {/* Pesan Tambahan dari Ayang */}
       <div>
         <label className="text-xs font-medium text-stone-700 block mb-1">
-          Catatan / Pesan Kasih Sayang untuk Cowok:
+          Catatan / Pesan untuk {applicant}:
         </label>
         <textarea
           rows={2}
           value={approverNotes}
           onChange={(e) => setApproverNotes(e.target.value)}
-          placeholder="Tuliskan wejangan atau pesan manis untuk pasangan..."
-          className="w-full rounded-xl border border-stone-300 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-rose-300"
+          placeholder="Tuliskan catatan khusus atau pesan untuk pasangan..."
+          className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
         />
       </div>
 
-      {/* Signature Pad for Ayang */}
-      <div className="rounded-xl border border-stone-200 p-3 sm:p-4 bg-stone-50/50">
+      {/* Signature Pad */}
+      <div className="rounded-xl border border-pink-100 p-3 sm:p-4 bg-pink-50/30">
         <SignaturePad
-          label={`Tanda Tangan Pengesahan (${permit.approverName})`}
-          subLabel="Tanda tangani dengan jari atau stylus di layar"
+          label={`Tanda Tangan Pengesahan (${approver})`}
+          subLabel="Tanda tangani di area ini menggunakan jari atau stylus"
           onSave={(dataUrl) => setSignature(dataUrl)}
           height={140}
         />
@@ -357,22 +362,37 @@ export default function ReviewPermitAction({
         type="button"
         disabled={isSubmitting}
         onClick={handleDecisionSubmit}
-        className={`w-full rounded-2xl py-3 px-4 text-sm font-bold text-white shadow-lg transition-all active:scale-[0.99] disabled:opacity-50 ${
+        className={`w-full rounded-2xl py-3 px-4 text-sm font-bold text-white shadow-lg transition-all active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2 ${
           selectedDecision === 'approved'
             ? 'bg-emerald-600 hover:bg-emerald-700'
             : selectedDecision === 'conditional'
             ? 'bg-amber-600 hover:bg-amber-700'
-            : 'bg-red-600 hover:bg-red-700'
+            : 'bg-rose-600 hover:bg-rose-700'
         }`}
       >
         {isSubmitting ? (
           <span>Menyimpan Pengesahan...</span>
         ) : (
-          <span>
-            {selectedDecision === 'approved' && 'SAHKAN & BERIKAN IZIN (ACC) ❤️'}
-            {selectedDecision === 'conditional' && 'SAHKAN DENGAN SYARAT (ACC BERSYARAT) ⚠️'}
-            {selectedDecision === 'rejected' && 'TETAPKAN PENOLAKAN IZIN ❌'}
-          </span>
+          <>
+            {selectedDecision === 'approved' && (
+              <>
+                <CheckCircle className="w-4 h-4" />
+                <span>Sahkan & Berikan Izin Resmi</span>
+              </>
+            )}
+            {selectedDecision === 'conditional' && (
+              <>
+                <AlertTriangle className="w-4 h-4" />
+                <span>Sahkan Permohonan dengan Syarat</span>
+              </>
+            )}
+            {selectedDecision === 'rejected' && (
+              <>
+                <XCircle className="w-4 h-4" />
+                <span>Tetapkan Penolakan Permohonan</span>
+              </>
+            )}
+          </>
         )}
       </button>
     </div>

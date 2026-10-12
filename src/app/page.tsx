@@ -22,8 +22,9 @@ import {
   ShieldCheck,
   CheckCircle,
   Hourglass,
-  ExternalLink,
+  ArrowLeft,
   Sparkles,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function HomePage() {
@@ -35,8 +36,6 @@ export default function HomePage() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const letterRef = useRef<HTMLDivElement | null>(null);
-
-  const profile = getStoredProfile();
 
   const loadData = async () => {
     const list = await getAllPermits();
@@ -60,7 +59,7 @@ export default function HomePage() {
     try {
       const canvas = await html2canvas(letterRef.current, {
         scale: 2,
-        backgroundColor: '#FCFBF7',
+        backgroundColor: '#FFFDFE',
         useCORS: true,
         logging: false,
       });
@@ -78,29 +77,28 @@ export default function HomePage() {
     }
   };
 
-  // Quick stats
   const totalPermits = permits.length;
   const approvedPermits = permits.filter((p) => p.status === 'approved' || p.status === 'conditional').length;
   const pendingPermits = permits.filter((p) => p.status === 'pending').length;
 
   return (
-    <div className="min-h-screen bg-[#F8F7F4] text-stone-900 pb-20 font-sans">
-      {/* ================= TOP BRANDING NAVBAR ================= */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-200">
+    <div className="min-h-screen bg-[#FFF5F7] text-stone-900 pb-20 font-sans">
+      {/* ================= TOP NAVBAR ================= */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-pink-100 shadow-2xs">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
             <Emblem className="w-9 h-9" />
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-black tracking-wider text-stone-900 font-serif">
-                  SI-IZIN AYANG
+                  SI-IZIN PASANGAN
                 </span>
-                <span className="rounded-md bg-rose-100 px-1.5 py-0.2 text-[9px] font-bold text-rose-700">
+                <span className="rounded-md bg-pink-100 px-1.5 py-0.2 text-[9px] font-bold text-pink-700">
                   KIP-RI
                 </span>
               </div>
-              <p className="text-[10px] text-stone-500 hidden sm:block">
-                Kementerian Izin Pasangan & Perlindungan Nongkrong
+              <p className="text-[10px] text-pink-600 font-medium hidden sm:block">
+                Rizki Ramadan & Lisa Suryani Purba
               </p>
             </div>
           </div>
@@ -109,16 +107,16 @@ export default function HomePage() {
             <button
               type="button"
               onClick={() => setSettingsOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 shadow-2xs"
+              className="flex items-center gap-1.5 rounded-xl border border-pink-200 bg-white px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-pink-50/50 shadow-2xs"
             >
-              <Settings className="w-3.5 h-3.5 text-stone-500" />
-              <span className="hidden sm:inline">Pengaturan Pasangan</span>
+              <Settings className="w-3.5 h-3.5 text-pink-600" />
+              <span className="hidden sm:inline">Pengaturan Profil</span>
             </button>
           </div>
         </div>
 
         {/* Tab Navigation */}
-        <div className="mx-auto max-w-4xl px-4 flex gap-2 border-t border-stone-100 pt-2 pb-2">
+        <div className="mx-auto max-w-4xl px-4 flex gap-2 border-t border-pink-50 pt-2 pb-2">
           <button
             type="button"
             onClick={() => {
@@ -128,8 +126,8 @@ export default function HomePage() {
             }}
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all ${
               activeTab === 'create' && !justCreatedPermit && !selectedPermit
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-stone-600 hover:bg-stone-100'
+                ? 'bg-pink-600 text-white shadow-xs'
+                : 'text-stone-600 hover:bg-pink-50/50'
             }`}
           >
             <PlusCircle className="w-4 h-4" />
@@ -145,14 +143,14 @@ export default function HomePage() {
             }}
             className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all relative ${
               activeTab === 'history' && !selectedPermit
-                ? 'bg-rose-600 text-white shadow-xs'
-                : 'text-stone-600 hover:bg-stone-100'
+                ? 'bg-pink-600 text-white shadow-xs'
+                : 'text-stone-600 hover:bg-pink-50/50'
             }`}
           >
             <History className="w-4 h-4" />
             <span>Riwayat Izin</span>
             {pendingPermits > 0 && (
-              <span className="ml-1 rounded-full bg-amber-400 px-1.5 py-0.2 text-[10px] font-black text-amber-950">
+              <span className="ml-1 rounded-full bg-pink-100 px-1.5 py-0.2 text-[10px] font-bold text-pink-700">
                 {pendingPermits}
               </span>
             )}
@@ -162,24 +160,24 @@ export default function HomePage() {
 
       {/* ================= HERO STATS WIDGET ================= */}
       <div className="mx-auto max-w-4xl px-4 pt-5">
-        <div className="grid grid-cols-3 gap-2 sm:gap-3 rounded-2xl bg-white border border-stone-200 p-3 sm:p-4 shadow-xs">
-          <div className="text-center border-r border-stone-100">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 rounded-2xl bg-white border border-pink-100 p-3 sm:p-4 shadow-xs">
+          <div className="text-center border-r border-pink-50">
             <span className="text-base sm:text-xl font-black text-stone-800 block">
               {totalPermits}
             </span>
-            <span className="text-[10px] sm:text-xs text-stone-500">Total Diajukan</span>
+            <span className="text-[10px] sm:text-xs text-stone-500">Total Permohonan</span>
           </div>
-          <div className="text-center border-r border-stone-100">
+          <div className="text-center border-r border-pink-50">
             <span className="text-base sm:text-xl font-black text-emerald-600 block">
               {approvedPermits}
             </span>
-            <span className="text-[10px] sm:text-xs text-stone-500">Izin Disetujui (ACC)</span>
+            <span className="text-[10px] sm:text-xs text-stone-500">Disetujui Resmi</span>
           </div>
           <div className="text-center">
-            <span className="text-base sm:text-xl font-black text-amber-500 block">
+            <span className="text-base sm:text-xl font-black text-pink-600 block">
               {pendingPermits}
             </span>
-            <span className="text-[10px] sm:text-xs text-stone-500">Menunggu Ayang</span>
+            <span className="text-[10px] sm:text-xs text-stone-500">Menunggu Tinjauan</span>
           </div>
         </div>
       </div>
@@ -189,25 +187,25 @@ export default function HomePage() {
         {/* CASE 1: JUST CREATED SUCCESS VIEW */}
         {justCreatedPermit && (
           <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
-            <div className="rounded-2xl border-2 border-emerald-300 bg-emerald-50/90 p-4 sm:p-6 text-center space-y-3">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
-                <CheckCircle className="w-8 h-8" />
+            <div className="rounded-2xl border-2 border-pink-300 bg-pink-50/90 p-4 sm:p-6 text-center space-y-3 shadow-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-100 text-pink-600">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
-              <h3 className="text-base sm:text-lg font-black text-emerald-950">
-                Surat Izin Resmi Berhasil Diterbitkan!
+              <h3 className="text-base sm:text-lg font-black text-pink-950">
+                Surat Permohonan Berhasil Diterbitkan
               </h3>
-              <p className="text-xs sm:text-sm text-emerald-800 max-w-md mx-auto">
-                Nomor Registrasi: <strong>{justCreatedPermit.letterNumber}</strong>. Sekarang kirimkan surat ini ke Ayang agar segera diperiksa dan ditandatangani!
+              <p className="text-xs sm:text-sm text-pink-800 max-w-md mx-auto">
+                Nomor Registrasi: <strong>{justCreatedPermit.letterNumber}</strong>. Silakan kirimkan surat ini ke Lisa Suryani Purba untuk ditinjau dan ditandatangani.
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShareModalPermit(justCreatedPermit)}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 text-xs sm:text-sm font-bold text-white hover:bg-emerald-700 transition-colors shadow-md"
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-pink-600 px-5 py-3 text-xs sm:text-sm font-bold text-white hover:bg-pink-700 transition-colors shadow-md shadow-pink-600/20"
                 >
                   <Share2 className="w-4 h-4" />
-                  <span>Kirim ke WhatsApp Ayang Sekarang</span>
+                  <span>Kirim ke WhatsApp Lisa Sekarang</span>
                 </button>
 
                 <button
@@ -226,7 +224,7 @@ export default function HomePage() {
                     setJustCreatedPermit(null);
                     setActiveTab('history');
                   }}
-                  className="w-full sm:w-auto flex items-center justify-center gap-1 rounded-xl bg-stone-200 px-4 py-3 text-xs font-semibold text-stone-700 hover:bg-stone-300 transition-colors"
+                  className="w-full sm:w-auto flex items-center justify-center gap-1 rounded-xl bg-stone-100 px-4 py-3 text-xs font-semibold text-stone-700 hover:bg-stone-200 transition-colors"
                 >
                   <span>Lihat Riwayat</span>
                 </button>
@@ -247,16 +245,17 @@ export default function HomePage() {
                 onClick={() => setSelectedPermit(null)}
                 className="text-xs font-bold text-stone-600 hover:text-stone-900 flex items-center gap-1.5"
               >
-                ← Kembali ke Daftar Riwayat
+                <ArrowLeft className="w-4 h-4" />
+                <span>Kembali ke Daftar Riwayat</span>
               </button>
 
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setShareModalPermit(selectedPermit)}
-                  className="flex items-center gap-1 rounded-xl border border-stone-200 bg-white px-3 py-1.5 text-xs font-bold text-stone-700 hover:bg-stone-50 shadow-2xs"
+                  className="flex items-center gap-1 rounded-xl border border-pink-200 bg-white px-3 py-1.5 text-xs font-bold text-pink-700 hover:bg-pink-50/50 shadow-2xs"
                 >
-                  <Share2 className="w-3.5 h-3.5 text-rose-500" />
+                  <Share2 className="w-3.5 h-3.5" />
                   <span>Bagikan</span>
                 </button>
                 <button
@@ -274,7 +273,7 @@ export default function HomePage() {
             {/* Document Render */}
             <OfficialLetterView ref={letterRef} permit={selectedPermit} />
 
-            {/* Ayang Review Box */}
+            {/* Review Action */}
             <ReviewPermitAction
               permit={selectedPermit}
               onUpdated={(updated) => {

@@ -1,19 +1,20 @@
-export type PermitCategory = 
-  | 'futsal' 
-  | 'nongkrong' 
-  | 'mabar' 
-  | 'touring' 
-  | 'ngopi' 
-  | 'reuni' 
-  | 'custom';
+export type PermitCategory = string;
 
 export type PermitStatus = 'pending' | 'approved' | 'conditional' | 'rejected';
+
+export interface ActivityCategory {
+  id: string;
+  label: string;
+  iconName: string;
+  defaultTitle: string;
+  defaultLocation?: string;
+}
 
 export interface PermitLetter {
   id: string;
   letterNumber: string;
-  applicantName: string; // Cowok
-  approverName: string;  // Ayang / Cewek
+  applicantName: string; // Rizki Ramadan
+  approverName: string;  // Lisa Suryani Purba
   category: PermitCategory;
   categoryName?: string;
   title: string;
@@ -22,17 +23,17 @@ export interface PermitLetter {
   eventDate: string;
   startTime: string;
   endTime: string;
-  companions: string; // Teman-teman yang ikut
-  promises: string[]; // Pakta integritas (misal: PAP tiap jam)
+  companions: string;
+  promises: string[];
   customPromise?: string;
-  applicantSignature?: string; // Data URL PNG
+  applicantSignature?: string;
   applicantSignedAt?: string;
 
-  // Review Ayang
+  // Review
   status: PermitStatus;
   approverNotes?: string;
-  demands: string[]; // Tuntutan/syarat ayang (misal: beliin seblak)
-  approverSignature?: string; // Data URL PNG
+  demands: string[];
+  approverSignature?: string;
   decidedAt?: string;
   createdAt: string;
   updatedAt: string;

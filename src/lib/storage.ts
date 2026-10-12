@@ -1,22 +1,64 @@
-import { PermitLetter, CoupleProfile, PermitStatus } from '@/types/permit';
+import { PermitLetter, CoupleProfile, PermitStatus, ActivityCategory } from '@/types/permit';
 import { getSupabaseClient } from './supabase';
 
 const STORAGE_KEY_PERMITS = 'kip_permits_list_v1';
 const STORAGE_KEY_PROFILE = 'kip_couple_profile';
+const STORAGE_KEY_CATEGORIES = 'kip_activity_categories_v1';
 
-const DEFAULT_PROFILE: CoupleProfile = {
-  maleName: 'Ahmad Futsal',
-  femaleName: 'Ayang Tercinta',
+export const DEFAULT_PROFILE: CoupleProfile = {
+  maleName: 'Rizki Ramadan',
+  femaleName: 'Lisa Suryani Purba',
   relationshipDate: '2023-01-01',
   whatsappMale: '',
   whatsappFemale: '',
 };
 
+export const DEFAULT_CATEGORIES: ActivityCategory[] = [
+  { id: 'futsal', label: 'Futsal', iconName: 'activity', defaultTitle: 'Izin Bermain Futsal Bareng Kawan', defaultLocation: 'Planet Futsal Arena' },
+  { id: 'nongkrong', label: 'Nongkrong', iconName: 'coffee', defaultTitle: 'Izin Nongkrong & Ngopi Santai', defaultLocation: 'Kafe / Warkop' },
+  { id: 'mabar', label: 'Mabar Game', iconName: 'gamepad-2', defaultTitle: 'Izin Mabar Game Online Push Rank', defaultLocation: 'Discord / Tempat Mabar' },
+  { id: 'touring', label: 'Sunmori / Riding', iconName: 'bike', defaultTitle: 'Izin Riding Motor Santai', defaultLocation: 'Jalur Riding Pagi' },
+  { id: 'reuni', label: 'Reuni Teman', iconName: 'users', defaultTitle: 'Izin Kumpul Reuni Teman Lama', defaultLocation: 'Restoran / Rumah Teman' },
+  { id: 'khusus', label: 'Kegiatan Khusus', iconName: 'sparkles', defaultTitle: 'Permohonan Izin Khusus', defaultLocation: 'Lokasi Acara' },
+];
+
+export function getStoredCategories(): ActivityCategory[] {
+  if (typeof window === 'undefined') return DEFAULT_CATEGORIES;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_CATEGORIES);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.warn('Error reading categories from localStorage:', e);
+  }
+  return DEFAULT_CATEGORIES;
+}
+
+export function saveStoredCategories(categories: ActivityCategory[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(categories));
+  } catch (e) {
+    console.error('Error saving categories to localStorage:', e);
+  }
+}
+
 export function getStoredProfile(): CoupleProfile {
   if (typeof window === 'undefined') return DEFAULT_PROFILE;
   try {
     const raw = localStorage.getItem(STORAGE_KEY_PROFILE);
-    if (raw) return { ...DEFAULT_PROFILE, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        ...DEFAULT_PROFILE,
+        ...parsed,
+        // Ensure names default to user names if empty
+        maleName: parsed.maleName || 'Rizki Ramadan',
+        femaleName: parsed.femaleName || 'Lisa Suryani Purba',
+      };
+    }
   } catch (e) {
     console.warn('Error reading profile from localStorage:', e);
   }
@@ -117,7 +159,6 @@ function saveLocalPermits(permits: PermitLetter[]): void {
 
 // Save or Update Permit
 export async function savePermit(permit: PermitLetter): Promise<PermitLetter> {
-  // Always update local storage first for instant responsiveness
   const localList = getLocalPermits();
   const existingIdx = localList.findIndex((p) => p.id === permit.id);
   let updatedList: PermitLetter[];
@@ -129,7 +170,6 @@ export async function savePermit(permit: PermitLetter): Promise<PermitLetter> {
   }
   saveLocalPermits(updatedList);
 
-  // If Supabase is available, sync to Supabase
   const client = getSupabaseClient();
   if (client) {
     try {
@@ -158,7 +198,6 @@ export async function getPermitById(id: string): Promise<PermitLetter | null> {
         .single();
       if (!error && data) {
         const permit = mapDbRowToPermit(data);
-        // cache locally
         await savePermit(permit);
         return permit;
       }
@@ -167,7 +206,6 @@ export async function getPermitById(id: string): Promise<PermitLetter | null> {
     }
   }
 
-  // Fallback to local storage
   const list = getLocalPermits();
   const found = list.find((p) => p.id === id);
   return found || null;
@@ -184,7 +222,6 @@ export async function getAllPermits(): Promise<PermitLetter[]> {
         .order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
         const mapped = data.map(mapDbRowToPermit);
-        // update local list cache
         saveLocalPermits(mapped);
         return mapped;
       }
@@ -212,10 +249,9 @@ export async function deletePermit(id: string): Promise<boolean> {
   return true;
 }
 
-// Encode permit into share URL hash (safe base64 json)
+// Encode permit to share URL
 export function encodePermitToUrl(permit: PermitLetter, baseUrl?: string): string {
   try {
-    // Compress lightweight version without huge signature if too large, or include full
     const jsonStr = JSON.stringify(permit);
     const encoded = typeof window !== 'undefined' ? btoa(encodeURIComponent(jsonStr)) : '';
     const origin = baseUrl || (typeof window !== 'undefined' ? window.location.origin : '');

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SI-IZIN AYANG | Portal Resmi Permohonan Izin Pasangan (KIP-RI)",
+  title: "SI-IZIN PASANGAN | Portal Resmi Izin Rizki Ramadan & Lisa Suryani Purba",
   description: "Aplikasi pengajuan surat izin keluar, futsal, dan nongkrong resmi untuk pasangan dengan tanda tangan digital dan stempel sah.",
   manifest: "/manifest.json",
   icons: {
@@ -38,7 +38,7 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#F8F7F4] text-stone-900 selection:bg-rose-200 selection:text-rose-900">
+      <body className="min-h-full flex flex-col bg-[#FFF5F7] text-stone-900 selection:bg-pink-200 selection:text-pink-900">
         {children}
       </body>
     </html>

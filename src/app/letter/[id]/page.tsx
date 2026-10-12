@@ -9,7 +9,7 @@ import ReviewPermitAction from '@/components/ReviewPermitAction';
 import ShareModal from '@/components/ShareModal';
 import html2canvas from 'html2canvas';
 import Link from 'next/link';
-import { ArrowLeft, Share2, Download, Heart, Loader2 } from 'lucide-react';
+import { ArrowLeft, Share2, Download, Heart, Loader2, FileX } from 'lucide-react';
 
 function LetterDetailContent() {
   const params = useParams();
@@ -57,7 +57,7 @@ function LetterDetailContent() {
     try {
       const canvas = await html2canvas(letterRef.current, {
         scale: 2,
-        backgroundColor: '#FCFBF7',
+        backgroundColor: '#FFFDFE',
         useCORS: true,
         logging: false,
       });
@@ -77,8 +77,8 @@ function LetterDetailContent() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-stone-100">
-        <Loader2 className="w-8 h-8 text-rose-500 animate-spin mb-3" />
+      <div className="flex min-h-screen flex-col items-center justify-center p-4 bg-[#FFF5F7]">
+        <Loader2 className="w-8 h-8 text-pink-500 animate-spin mb-3" />
         <p className="text-sm font-semibold text-stone-700">
           Memuat Berkas Surat Resmi...
         </p>
@@ -88,9 +88,11 @@ function LetterDetailContent() {
 
   if (!permit) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-stone-100">
-        <div className="rounded-3xl bg-white p-8 max-w-md shadow-xl space-y-4">
-          <div className="text-4xl">📄❌</div>
+      <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-[#FFF5F7]">
+        <div className="rounded-3xl bg-white p-8 max-w-md shadow-xl space-y-4 border border-pink-100">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-pink-50 text-pink-600">
+            <FileX className="w-7 h-7" />
+          </div>
           <h2 className="text-lg font-bold text-stone-800">
             Surat Izin Tidak Ditemukan
           </h2>
@@ -99,24 +101,26 @@ function LetterDetailContent() {
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-rose-700 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-pink-600 px-4 py-2.5 text-xs font-bold text-white hover:bg-pink-700 transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
-            Kembali ke Beranda
+            <span>Kembali ke Beranda</span>
           </Link>
         </div>
       </div>
     );
   }
 
+  const approver = permit.approverName || 'Lisa Suryani Purba';
+
   return (
-    <div className="min-h-screen bg-stone-100/90 pb-16 font-sans">
+    <div className="min-h-screen bg-[#FFF5F7] pb-16 font-sans">
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-stone-200 px-4 py-3">
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-pink-100 px-4 py-3">
         <div className="mx-auto flex max-w-4xl items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-rose-600 transition-colors"
+            className="flex items-center gap-1.5 text-xs font-bold text-stone-700 hover:text-pink-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Beranda</span>
@@ -129,9 +133,9 @@ function LetterDetailContent() {
             <button
               type="button"
               onClick={() => setShareModalOpen(true)}
-              className="flex items-center gap-1.5 rounded-xl border border-stone-300 bg-white px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-50 shadow-2xs"
+              className="flex items-center gap-1.5 rounded-xl border border-pink-200 bg-white px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-pink-50 shadow-2xs"
             >
-              <Share2 className="w-3.5 h-3.5 text-stone-600" />
+              <Share2 className="w-3.5 h-3.5 text-pink-600" />
               <span>Bagikan</span>
             </button>
             <button
@@ -151,23 +155,23 @@ function LetterDetailContent() {
       <main className="mx-auto max-w-4xl px-3 sm:px-6 pt-6 space-y-6">
         {/* Ayang Attention Banner */}
         {permit.status === 'pending' && (
-          <div className="rounded-2xl bg-linear-to-r from-rose-500 via-rose-600 to-amber-500 p-4 text-white shadow-md flex items-center justify-between">
+          <div className="rounded-2xl bg-linear-to-r from-pink-500 via-rose-500 to-pink-600 p-4 text-white shadow-md flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Heart className="w-6 h-6 fill-white animate-bounce shrink-0" />
+              <Heart className="w-6 h-6 fill-white shrink-0" />
               <div>
                 <h3 className="text-xs sm:text-sm font-bold">
-                  Surat Menunggu Tinjauan {permit.approverName}
+                  Surat Menunggu Tinjauan {approver}
                 </h3>
-                <p className="text-[11px] text-white/90">
-                  Periksa rincian kegiatan & berikan persetujuan di bagian bawah surat!
+                <p className="text-[11px] text-pink-100">
+                  Periksa rincian kegiatan dan berikan persetujuan di bagian bawah surat.
                 </p>
               </div>
             </div>
             <a
               href="#review-section"
-              className="hidden sm:inline-flex rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
+              className="hidden sm:inline-flex rounded-xl bg-white px-3 py-1.5 text-xs font-bold text-pink-600 hover:bg-pink-50 transition-colors shrink-0"
             >
-              Tinjau Sekarang ↓
+              Tinjau Sekarang
             </a>
           </div>
         )}
@@ -203,8 +207,8 @@ export default function LetterDetailPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center p-4">
-          <Loader2 className="w-8 h-8 text-rose-500 animate-spin" />
+        <div className="flex min-h-screen items-center justify-center p-4 bg-[#FFF5F7]">
+          <Loader2 className="w-8 h-8 text-pink-500 animate-spin" />
         </div>
       }
     >

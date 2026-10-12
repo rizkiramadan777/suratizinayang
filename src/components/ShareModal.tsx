@@ -9,9 +9,8 @@ import {
   Copy,
   Check,
   Download,
-  ExternalLink,
   MessageCircle,
-  QrCode,
+  Info,
 } from 'lucide-react';
 
 interface ShareModalProps {
@@ -34,16 +33,19 @@ export default function ShareModal({
 
   const shareUrl = encodePermitToUrl(permit);
 
-  // Generate WhatsApp message
+  // Generate WhatsApp message (tanpa emoji, sopan & romantis)
   const isApproved = permit.status === 'approved' || permit.status === 'conditional';
   let waText = '';
 
+  const approver = permit.approverName || 'Lisa Suryani Purba';
+  const applicant = permit.applicantName || 'Rizki Ramadan';
+
   if (permit.status === 'pending') {
-    waText = `Halo Yang Mulia ${permit.approverName} tercinta ❤️%0A%0AIni surat permohonan dispensasi resmi saya untuk kegiatan *${permit.title}* (Nomor: ${permit.letterNumber}).%0A%0AMohon ditinjau, diberikan wejangan, dan ditandatangani secara digital ya:%0A${shareUrl}%0A%0ALove you banyak-banyak! 🥰`;
+    waText = `Kepada ${approver},%0A%0ABerikut surat permohonan izin resmi dari ${applicant} untuk kegiatan *${permit.title}* (No. Registrasi: ${permit.letterNumber}).%0A%0AMohon ditinjau dan ditandatangani secara digital melalui tautan resmi:%0A${shareUrl}%0A%0ATerima kasih banyak atas perhatian dan kasih sayangnya.`;
   } else if (isApproved) {
-    waText = `Lapor Yang Mulia ${permit.approverName}! ❤️%0A%0ASurat Izin *${permit.title}* (No: ${permit.letterNumber}) telah resmi berstatus *DISAHKAN*.%0A%0ABukti surat sah bermaterai dapat dilihat di:%0A${shareUrl}%0A%0ASiap mematuhi segala pakta integritas! 🫡`;
+    waText = `Pemberitahuan Resmi untuk ${approver}:%0A%0ASurat Izin *${permit.title}* (No: ${permit.letterNumber}) telah resmi *DISAHKAN*.%0A%0ABukti surat sah bermaterai dapat dilihat di:%0A${shareUrl}%0A%0A${applicant} siap mematuhi seluruh komitmen dan pakta integritas.`;
   } else {
-    waText = `Surat Izin *${permit.title}* (No: ${permit.letterNumber}) telah diputuskan *DITOLAK* oleh ${permit.approverName}.%0A%0ASaya akan tetap di rumah menemani Ayang tercinta 🥺❤️%0A${shareUrl}`;
+    waText = `Pemberitahuan untuk ${approver}:%0A%0ASurat Izin *${permit.title}* (No: ${permit.letterNumber}) telah berstatus *DITOLAK*.%0A%0A${applicant} akan tetap berada di rumah berkegiatan bersama.%0A${shareUrl}`;
   }
 
   const waTarget = profile.whatsappFemale ? profile.whatsappFemale.replace(/[^0-9]/g, '') : '';
@@ -70,11 +72,11 @@ export default function ShareModal({
         </button>
 
         <div className="text-center pt-2">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-600">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-600">
             <Share2 className="w-6 h-6" />
           </div>
           <h3 className="text-base font-bold text-stone-900">
-            Kirim & Bagikan Surat Izin
+            Bagikan Surat Izin Resmi
           </h3>
           <p className="text-xs text-stone-500">
             Nomor: <span className="font-mono font-bold text-stone-700">{permit.letterNumber}</span>
@@ -90,11 +92,11 @@ export default function ShareModal({
             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] hover:bg-[#20ba59] py-3.5 px-4 text-xs sm:text-sm font-bold text-white shadow-lg transition-transform active:scale-[0.99]"
           >
             <MessageCircle className="w-5 h-5" />
-            <span>Kirim ke WhatsApp Ayang Langsung</span>
+            <span>Kirim ke WhatsApp {approver}</span>
           </a>
 
           {/* Copy Link */}
-          <div className="flex items-center gap-2 rounded-xl border border-stone-200 bg-stone-50 p-1.5">
+          <div className="flex items-center gap-2 rounded-xl border border-pink-100 bg-pink-50/40 p-1.5">
             <input
               type="text"
               readOnly
@@ -104,12 +106,12 @@ export default function ShareModal({
             <button
               type="button"
               onClick={handleCopyLink}
-              className="flex items-center gap-1 rounded-lg bg-stone-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-stone-800 transition-colors"
+              className="flex items-center gap-1 rounded-lg bg-pink-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-pink-700 transition-colors"
             >
               {copied ? (
                 <>
-                  <Check className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Tersalin!</span>
+                  <Check className="w-3.5 h-3.5 text-white" />
+                  <span>Tersalin</span>
                 </>
               ) : (
                 <>
@@ -138,8 +140,9 @@ export default function ShareModal({
           </div>
         )}
 
-        <div className="rounded-xl bg-amber-50 p-3 text-center text-[11px] text-amber-800">
-          💡 Pasangan Anda bisa membuka link ini di HP atau Tablet tanpa perlu install aplikasi apapun!
+        <div className="rounded-xl bg-pink-50 border border-pink-100 p-3 text-center text-[11px] text-pink-900 flex items-center gap-2">
+          <Info className="w-4 h-4 text-pink-600 shrink-0" />
+          <span>Pasangan dapat membuka tautan ini langsung di ponsel atau tablet tanpa mengunduh aplikasi tambahan.</span>
         </div>
       </div>
     </div>

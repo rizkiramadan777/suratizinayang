@@ -3,16 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { CoupleProfile } from '@/types/permit';
 import { getStoredProfile, saveStoredProfile, syncLocalPermitsToSupabase } from '@/lib/storage';
-import { getSupabaseClient } from '@/lib/supabase';
 import {
   X,
   Settings,
   Heart,
-  Database,
   Phone,
-  Check,
   Save,
-  AlertCircle,
   CheckCircle2,
 } from 'lucide-react';
 
@@ -24,8 +20,6 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModalProps) {
   const [profile, setProfile] = useState<CoupleProfile>(() => getStoredProfile());
-  const [dbStatus, setDbStatus] = useState<string>('');
-  const [isTestingDb, setIsTestingDb] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
@@ -46,31 +40,6 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
       setSavedSuccess(false);
       onClose();
     }, 1000);
-  };
-
-  const handleTestSupabase = async () => {
-    setIsTestingDb(true);
-    setDbStatus('');
-    try {
-      saveStoredProfile(profile);
-      const client = getSupabaseClient();
-      if (!client) {
-        setDbStatus('URL atau Key Supabase belum lengkap atau tidak valid.');
-        setIsTestingDb(false);
-        return;
-      }
-      const { data, error } = await client.from('permits').select('id').limit(1);
-      if (error) {
-        setDbStatus(`Gagal terhubung: ${error.message}`);
-      } else {
-        setDbStatus('Berhasil terhubung ke Supabase Database.');
-        await syncLocalPermitsToSupabase();
-      }
-    } catch (err: any) {
-      setDbStatus(`Error koneksi: ${err.message || 'Gagal'}`);
-    } finally {
-      setIsTestingDb(false);
-    }
   };
 
   return (
@@ -94,29 +63,29 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
               Pengaturan Profil Pasangan
             </h3>
             <p className="text-xs text-stone-500">
-              Konfigurasi data pasangan dan koneksi Supabase Cloud
+              Konfigurasi identitas pasangan dan kontak WhatsApp
             </p>
           </div>
         </div>
 
         {savedSuccess && (
-          <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-800 font-semibold flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-            <span>Pengaturan berhasil disimpan.</span>
+          <div className="flex items-center gap-2 rounded-2xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>Pengaturan berhasil disimpan!</span>
           </div>
         )}
 
-        {/* 1. Profil Pasangan */}
-        <div className="space-y-3">
+        {/* Form Biodata Pasangan */}
+        <div className="space-y-4">
           <h4 className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
-            <Heart className="w-3.5 h-3.5 text-pink-600" />
-            Identitas Resmi Pasangan
+            <Heart className="w-3.5 h-3.5 fill-pink-600 text-pink-600" />
+            Identitas Pasangan Resmi
           </h4>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="text-xs font-medium text-stone-700 block mb-1">
-                Nama Pemohon (Pria)
+                Nama Lengkap Pria (Pemohon)
               </label>
               <input
                 type="text"
@@ -126,9 +95,10 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
                 className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
               />
             </div>
+
             <div>
               <label className="text-xs font-medium text-stone-700 block mb-1">
-                Nama Pasangan (Penyetuju)
+                Nama Lengkap Wanita (Penyetuju)
               </label>
               <input
                 type="text"
@@ -141,7 +111,19 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
           </div>
 
           <div>
-            <label className="text-xs font-medium text-stone-700 block mb-1 flex items-center gap-1.5">
+            <label className="text-xs font-medium text-stone-700 block mb-1">
+              Tanggal Hubungan / Jadian
+            </label>
+            <input
+              type="date"
+              value={profile.relationshipDate || ''}
+              onChange={(e) => setProfile({ ...profile, relationshipDate: e.target.value })}
+              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-medium text-stone-700 mb-1 flex items-center gap-1.5">
               <Phone className="w-3.5 h-3.5 text-emerald-600" />
               Nomor WhatsApp Lisa (Format: 628xxxxxxxx)
             </label>
@@ -155,59 +137,6 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
             <p className="text-[10px] text-stone-400 mt-1">
               Jika nomor diisi, tombol bagikan akan langsung membuka chat WhatsApp ke kontak Lisa Suryani Purba.
             </p>
-          </div>
-        </div>
-
-        {/* 2. Supabase Integration */}
-        <div className="space-y-3 pt-3 border-t border-pink-100">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-pink-700 flex items-center gap-1.5">
-              <Database className="w-3.5 h-3.5 text-pink-600" />
-              Database Supabase (Opsional)
-            </h4>
-            <span className="text-[10px] text-stone-400">Sinkronisasi Cloud</span>
-          </div>
-
-          <p className="text-xs text-stone-600">
-            Digunakan untuk menyimpan data secara online real-time. Jika dikosongkan, aplikasi tetap berfungsi normal via LocalStorage dan tautan URL.
-          </p>
-
-          <div>
-            <label className="text-xs font-medium text-stone-700 block mb-1">
-              Supabase Project URL
-            </label>
-            <input
-              type="text"
-              value={profile.supabaseUrl || ''}
-              onChange={(e) => setProfile({ ...profile, supabaseUrl: e.target.value })}
-              placeholder="https://yourproject.supabase.co"
-              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-medium text-stone-700 block mb-1">
-              Supabase Anon Key
-            </label>
-            <input
-              type="password"
-              value={profile.supabaseKey || ''}
-              onChange={(e) => setProfile({ ...profile, supabaseKey: e.target.value })}
-              placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              className="w-full rounded-xl border border-stone-200 p-2.5 text-xs font-mono text-stone-900 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            />
-          </div>
-
-          <div className="flex items-center gap-2 pt-1">
-            <button
-              type="button"
-              disabled={isTestingDb}
-              onClick={handleTestSupabase}
-              className="rounded-xl border border-stone-200 bg-stone-50 px-3 py-1.5 text-xs font-semibold text-stone-700 hover:bg-stone-100 disabled:opacity-50"
-            >
-              {isTestingDb ? 'Menguji Koneksi...' : 'Uji Koneksi Supabase'}
-            </button>
-            {dbStatus && <span className="text-xs font-medium text-stone-600">{dbStatus}</span>}
           </div>
         </div>
 

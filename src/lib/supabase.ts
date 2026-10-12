@@ -3,52 +3,23 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 let cachedClient: SupabaseClient | null = null;
 let cachedConfigKey = '';
 
-function isValidKey(key?: string): boolean {
-  if (!key) return false;
-  const trimmed = key.trim();
-  if (trimmed.length < 20) return false;
-  if (trimmed.includes('GANTI_DENGAN')) return false;
-  if (trimmed.includes('your-project')) return false;
-  return true;
-}
-
-function isValidUrl(url?: string): boolean {
-  if (!url) return false;
-  const trimmed = url.trim();
-  if (!trimmed.startsWith('https://')) return false;
-  if (trimmed.includes('your-project-id')) return false;
-  return true;
-}
+// Default Project URL Supabase
+const DEFAULT_URL = 'https://wndxdmzrgqrqvogmbipg.supabase.co';
 
 export function getSupabaseClient(): SupabaseClient | null {
+  // Ambil URL & Key dari Environment Variables Vercel
   const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const envKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
-  let activeUrl = isValidUrl(envUrl) ? envUrl : '';
-  let activeKey = isValidKey(envKey) ? envKey : '';
+  const activeUrl =
+    envUrl && envUrl.startsWith('https://') && !envUrl.includes('your-project')
+      ? envUrl
+      : DEFAULT_URL;
 
-  // Jika di browser client, cek konfigurasi dari Pengaturan Profil (localStorage)
-  if (typeof window !== 'undefined') {
-    try {
-      const stored = localStorage.getItem('kip_couple_profile');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (isValidUrl(parsed.supabaseUrl)) {
-          activeUrl = parsed.supabaseUrl.trim();
-        }
-        if (isValidKey(parsed.supabaseKey)) {
-          activeKey = parsed.supabaseKey.trim();
-        }
-      }
-    } catch (e) {
-      console.warn('Error reading stored Supabase config:', e);
-    }
-  }
-
-  // Fallback URL project jika belum terisi
-  if (!activeUrl) {
-    activeUrl = 'https://wndxdmzrgqrqvogmbipg.supabase.co';
-  }
+  const activeKey =
+    envKey && envKey.length > 20 && !envKey.includes('GANTI_DENGAN')
+      ? envKey
+      : '';
 
   if (!activeUrl || !activeKey) {
     return null;
@@ -68,4 +39,3 @@ export function getSupabaseClient(): SupabaseClient | null {
     return null;
   }
 }
-

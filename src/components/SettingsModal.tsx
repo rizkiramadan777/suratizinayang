@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CoupleProfile } from '@/types/permit';
-import { getStoredProfile, saveStoredProfile } from '@/lib/storage';
+import { getStoredProfile, saveStoredProfile, syncLocalPermitsToSupabase } from '@/lib/storage';
 import { getSupabaseClient } from '@/lib/supabase';
 import {
   X,
@@ -37,9 +37,10 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
 
   if (!isOpen) return null;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     saveStoredProfile(profile);
     setSavedSuccess(true);
+    await syncLocalPermitsToSupabase();
     if (onSaved) onSaved();
     setTimeout(() => {
       setSavedSuccess(false);
@@ -54,7 +55,7 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
       saveStoredProfile(profile);
       const client = getSupabaseClient();
       if (!client) {
-        setDbStatus('URL atau Key Supabase belum lengkap.');
+        setDbStatus('URL atau Key Supabase belum lengkap atau tidak valid.');
         setIsTestingDb(false);
         return;
       }
@@ -63,6 +64,7 @@ export default function SettingsModal({ isOpen, onClose, onSaved }: SettingsModa
         setDbStatus(`Gagal terhubung: ${error.message}`);
       } else {
         setDbStatus('Berhasil terhubung ke Supabase Database.');
+        await syncLocalPermitsToSupabase();
       }
     } catch (err: any) {
       setDbStatus(`Error koneksi: ${err.message || 'Gagal'}`);

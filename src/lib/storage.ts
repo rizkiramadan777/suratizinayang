@@ -188,6 +188,24 @@ export async function savePermit(permit: PermitLetter): Promise<PermitLetter> {
   return permit;
 }
 
+// Sinkronisasi permit lokal ke Supabase jika ada yang belum terunggah
+export async function syncLocalPermitsToSupabase(): Promise<void> {
+  const client = getSupabaseClient();
+  if (!client) return;
+
+  const localList = getLocalPermits();
+  if (localList.length === 0) return;
+
+  try {
+    for (const permit of localList) {
+      const dbRow = mapPermitToDbRow(permit);
+      await client.from('permits').upsert(dbRow, { onConflict: 'id' });
+    }
+  } catch (err) {
+    console.warn('Sync to Supabase warning:', err);
+  }
+}
+
 // Fetch single permit by ID
 export async function getPermitById(id: string): Promise<PermitLetter | null> {
   const client = getSupabaseClient();
@@ -200,7 +218,6 @@ export async function getPermitById(id: string): Promise<PermitLetter | null> {
         .single();
       if (!error && data) {
         const permit = mapDbRowToPermit(data);
-        await savePermit(permit);
         return permit;
       }
     } catch (err) {
@@ -210,6 +227,15 @@ export async function getPermitById(id: string): Promise<PermitLetter | null> {
 
   const list = getLocalPermits();
   const found = list.find((p) => p.id === id);
+  if (found && client) {
+    // Jika ada di lokal tapi belum ada di cloud, langsung upload
+    try {
+      const dbRow = mapPermitToDbRow(found);
+      await client.from('permits').upsert(dbRow, { onConflict: 'id' });
+    } catch (e) {
+      // ignore
+    }
+  }
   return found || null;
 }
 
@@ -217,6 +243,9 @@ export async function getPermitById(id: string): Promise<PermitLetter | null> {
 export async function getAllPermits(): Promise<PermitLetter[]> {
   const client = getSupabaseClient();
   if (client) {
+    // Sync permit lokal yang belum terupload
+    await syncLocalPermitsToSupabase();
+
     try {
       const { data, error } = await client
         .from('permits')

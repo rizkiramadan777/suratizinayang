@@ -3,22 +3,40 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 let cachedClient: SupabaseClient | null = null;
 let cachedConfigKey = '';
 
+function isValidKey(key?: string): boolean {
+  if (!key) return false;
+  const trimmed = key.trim();
+  if (trimmed.length < 20) return false;
+  if (trimmed.includes('GANTI_DENGAN')) return false;
+  if (trimmed.includes('your-project')) return false;
+  return true;
+}
+
+function isValidUrl(url?: string): boolean {
+  if (!url) return false;
+  const trimmed = url.trim();
+  if (!trimmed.startsWith('https://')) return false;
+  if (trimmed.includes('your-project-id')) return false;
+  return true;
+}
+
 export function getSupabaseClient(): SupabaseClient | null {
-  // Check env first
   const envUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
   const envKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
-  let activeUrl = envUrl;
-  let activeKey = envKey;
+  let activeUrl = isValidUrl(envUrl) ? envUrl : '';
+  let activeKey = isValidKey(envKey) ? envKey : '';
 
-  // If not in env, check localStorage config if on client
-  if ((!activeUrl || !activeKey) && typeof window !== 'undefined') {
+  // Jika di browser client, cek konfigurasi dari Pengaturan Profil (localStorage)
+  if (typeof window !== 'undefined') {
     try {
       const stored = localStorage.getItem('kip_couple_profile');
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (parsed.supabaseUrl && parsed.supabaseKey) {
+        if (isValidUrl(parsed.supabaseUrl)) {
           activeUrl = parsed.supabaseUrl.trim();
+        }
+        if (isValidKey(parsed.supabaseKey)) {
           activeKey = parsed.supabaseKey.trim();
         }
       }
@@ -27,7 +45,12 @@ export function getSupabaseClient(): SupabaseClient | null {
     }
   }
 
-  if (!activeUrl || !activeKey || activeUrl === 'https://your-project-id.supabase.co') {
+  // Fallback URL project jika belum terisi
+  if (!activeUrl) {
+    activeUrl = 'https://wndxdmzrgqrqvogmbipg.supabase.co';
+  }
+
+  if (!activeUrl || !activeKey) {
     return null;
   }
 
@@ -45,3 +68,4 @@ export function getSupabaseClient(): SupabaseClient | null {
     return null;
   }
 }
+
